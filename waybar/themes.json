@@ -1,0 +1,18 @@
+[
+    {
+        "name": "TOP-nord",
+        "config": "TOP-nord.json",
+        "style": "nord.css",
+        "scripts": [
+            "auto_color.sh"
+        ]
+    },
+    {
+        "name": "TOP-defo",
+        "config": "TOP-defo.json",
+        "style": "defo.css",
+        "scripts": [
+            "auto_color.sh"
+        ]
+    }
+]

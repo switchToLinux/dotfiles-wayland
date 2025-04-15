@@ -1,0 +1,142 @@
+# waybar说明
+
+
+## Theme列表
+
+| 主题 | 展示 |
+|:---- |:--------------------------------- |
+| TOP-Default |  ![img](https://i.imgur.com/pVH8S5e.png) |
+| TOP-cjbassi |  ![img](https://i.imgur.com/Qbj43Uz.png) |
+|TOP-mxkrsv | ![](https://camo.githubusercontent.com/61190e7030801b657a2507fbc5f330db4b040cb69fb330a7122118e15de96162/68747470733a2f2f692e696d6775722e636f6d2f627974427046442e706e67)|
+
+
+##主题设计
+
+我希望实现一个waybar主题框架，需要实现以下功能：
+- 颜色搭配方案化，所有用到的颜色都定义在 colors/theme_name.css 中， 然后在 style_name.css 中引用，请帮我合理规划一个颜色名称设计方案。
+- 颜色搭配方案要支持两组的7色搭配，一组是亮色，一组是暗色。
+- 颜色搭配方案可以按照模块引用命名，方便快速了解每个模块的颜色搭配。
+
+
+目录结构说明
+
+| 目录 | 说明 |
+|:---- |:--------------------------------- |
+| configs | 只负责布局配置， 左、中、右搭配什么模块，模块间是否有分隔符等 |
+| styles | 只负责样式配置，比如颜色搭配、字体、间距等 |
+|modules | 只负责模块配置，比如模块名称、模块参数等 |
+|scripts | 脚本工具，比如切换主题样式功能，自动切换颜色搭配功能 |
+| themes | 主题样式定义, 规定了某个主题对应的config/style文件名以及是否需要颜色自动切换功能 |
+
+### ColorScheme设计
+
+名称约定:
+| 名称 | 说明 |
+|:---- |:--------------------------------- |
+| foreground | 默认前景色 |
+| background | 默认背景色 |
+| color0 | 颜色0 |
+| color1 | 颜色1 |
+| color2 | 颜色2 |
+| color3 | 颜色3 |
+| color4 | 颜色4 |
+| color5 | 颜色5 |
+| color6 | 颜色6 |
+| color7 | 颜色7 |
+| color8 | 颜色8 |
+| color9 | 颜色9 |
+| color10 | 颜色10 |
+| color11 | 颜色11 |
+| color12 | 颜色12 |
+| color13 | 颜色13 |
+| color14 | 颜色14 |
+| color15 | 颜色15 |
+
+> 其中 颜色 1-15 都可以用于任何位置， 但分隔符 custom/arrowN 中的 N 对应的颜色就是 colorN 的颜色。
+
+### StyleScheme设计
+
+规则约束：
+- 对于支持颜色自动更换的主题，需要引用 color方案， 并且在 style 中定义好 color0 - color15 的颜色搭配。
+- 对于不支持颜色自动更换的主题，需要在 style 中定义好颜色搭配即可，当然更建议使用 color定义的颜色方案（复用）。
+
+### ModuleScheme设计
+
+module 分类：
+- 内置模块： 比如 cpu、memory、network、battery、clock, 定义在 modules/modules.json 中。
+- 自定义模块： 比如 custom/arrow1, 定义在 modules/modules-custom.json 中。
+- 分隔符模块： 比如 custom/arrow1, 定义在 modules/modules-arrow.json 中。
+
+
+### 自动生成颜色样式规则
+
+在 ~/.config/waybar/config 中定义好左、中、右模块的顺序，然后运行 scripts/gen_color.sh  脚本，即可自动生成样式规则, 规则逻辑如下：
+
+分隔符模块： custom/arrowN(用于右侧) 和 custom/arrow1N(用于左侧和中间)
+功能模块:  除了 分隔符模块的其他模块.
+
+左侧颜色规则：
+- 首个模块如果是分隔符模块, 则 custom/arrow1N 的背景色为 @colorN， 前景色为 @background. 
+- 首个模块如果是功能模块, 则 功能模块的背景色为 @background ， 前景色为相邻分隔符模块 custom/arrow1N 的 @colorN 颜色.
+- 非首个的分隔符模块 custom/arrow1N 的背景色为 @colorN ， 前景色为上一个分隔符模块 custom/arrow1M对应的 @colorM颜色.
+- 非首个功能模块的背景色为前一个分隔符模块 custom/arrow1M对应的 @colorM颜色， 前景色为 相邻下一个分隔符模块 custom/arrow1N对应的 @colorN 颜色 .
+
+中间颜色规则：
+- 与左侧颜色规则相同。
+
+右侧颜色规则：
+- 解析规则与左侧颜色规则相同， 但处理右侧模块要逆序解析模块顺序。
+
+
+请分别实现这三个模块的颜色规则处理逻辑， 注意 “.modules-right” jq 处理 "-"  符号报错，需要注意.
+
+读取的配置文件： $HOME/.config/waybar/config
+生成的文件路径： $HOME/.config/waybar/styles/autogen_color.css
+
+配置参考示例：
+```css
+    "modules-left": [
+        "custom/arrow10",
+        "hyprland/mode",
+        "custom/arrow11",
+        "hyprland/workspaces",
+        "custom/arrow12",
+        "hyprland/window",
+        "custom/arrow13"
+    ],
+    "modules-center": [
+        "custom/arrow0,
+        "mpris",
+        "custom/arrow1",
+    ],
+    "modules-right": [
+        "custom/arrow9",
+        "pulseaudio",
+        "custom/arrow8",
+    ]
+```
+参考生成的样式规则类似如下：
+```css
+#hyprland-mode {
+    color: @color11;
+    background: @color10;
+}
+#custom-arrow0{
+    color: @color1;
+    background: @background;
+}
+
+```
+
+## HowTo主题配置
+
+- **颜色方案选择**: 我已经实现了一个颜色配置功能页面，[点击这里](https://switchtolinux.github.io/switchToLinux/pages/color-schema/)配置自己配置喜欢的颜色搭配方案，至少要有 color0-color9颜色配置， color10 以后可以用于其他配置， 然后保存在 colors 目录下。
+- **样式搭配配置**： 在 styles 目录新建一个样式配置文件。
+- **布局搭配方案配置**： 在 configs 目录新创建一个布局配置文件。
+- **配置主题信息**： 在 themes.json 配置自己创建的主题信息。
+ 
+
+
+## 配置参考资料
+
+- [waybar-github](https://github.com/Alexays/Waybar/wiki)
