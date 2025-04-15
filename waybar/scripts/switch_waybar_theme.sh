@@ -30,18 +30,20 @@ switch_theme() {
     selected_color=$(jq -r '.[] | select(.name == "'"$selected_theme"'") |.color' $HOME/.config/waybar/themes.json)
 
     echo "debug: $selected_theme $selected_config $selected_style $selected_color"
-    [[ ! -f  "$config_dir/$selected_config" ]] && echo "未找到对应的配置文件，退出" && exit 1
-    [[ ! -f  "$styles_dir/$selected_style" ]] && echo "未找到对应的样式文件，退出" && exit 1
-    [[ ! -f  "$color_dir/$selected_color" ]] && echo "未找到对应的颜色文件，退出" && exit 1
+    [[ ! -f  "$config_dir/$selected_config" ]] && echo "未找到对应的配置文件 $selected_config，退出" && exit 1
+    [[ ! -f  "$styles_dir/$selected_style" ]] && echo "未找到对应的样式文件 $selected_style，退出" && exit 1
+    if [[ ! -z "$selected_color" && "$selected_color" != "null" ]] ; then
+        [[ ! -f  "$color_dir/$selected_color" ]] && echo "未找到对应的颜色文件，退出" && exit 1
+        ln -sf "$color_dir/$selected_color" "$color_link"
+    fi
     ln -sf "$config_dir/$selected_config" "$config_link"
     ln -sf "$styles_dir/$selected_style" "$style_link"
-    ln -sf "$color_dir/$selected_color" "$color_link"
 
     # 执行脚本
     echo "执行脚本"
     for script in $(jq -r '.[] | select(.name == "'"$selected_theme"'") | .scripts[]' $HOME/.config/waybar/themes.json) ; do
         chmod +x $script_dir/${script} 
-        $script_dir/${script}  >/tmp/a.log 2>&1
+        $script_dir/${script}  >/dev/null 2>&1
     done
     
     notify-send "已切换到 $selected_theme 主题"

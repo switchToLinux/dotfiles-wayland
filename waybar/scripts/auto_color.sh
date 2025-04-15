@@ -16,7 +16,7 @@ generate_css() {
     local background=$2
     local color=$3
     local font_size=$DEFAULT_FONT
-    if [[ "${module_name}" =~ ^custom-arrow ]] ; then
+   if [[ "$module_name" =~ ^(custom-arrow|custom-logo|custom-power) ]]; then
         font_size=$DEFAULT_ARROW_FONT
     fi
     echo "module_info: $module_name : $background , $color , $font_size"

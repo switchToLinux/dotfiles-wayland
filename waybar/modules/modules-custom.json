@@ -4,19 +4,38 @@
         "tooltip": false,
         "on-click": "~/.config/hypr/scripts/show_power_menu.sh"
     },
+    "custom/powermenu": {
+        "format": "⏻ ",
+        "tooltip": false,
+        "menu": "on-click",
+        "menu-file": "$HOME/.config/waybar/power_menu.xml", // Menu file in resources folder
+        "menu-actions": {
+            "shutdown": "shutdown",
+            "reboot": "reboot",
+            "suspend": "systemctl suspend",
+            "hibernate": "systemctl hibernate"
+        }
+    },
     "custom/logo": {
-        "format": "  ",
+        "format": "",
+        "format-alt": "",
         "tooltip": false,
         "on-click": "wofi"
     },
     "custom/music": {
-        "format": "    {}",
-        "escape": true,
+        "format": "🎜 {}",
         "interval": 5,
-        "tooltip": false,
-        "exec": "playerctl metadata --format='{{ title }}'",
+        "tooltip": true,
+        "format-icons": {
+            "default": "🎜"
+        },
+        "exec": "playerctl metadata --format='{{ artist }} - {{ title }}'",
         "on-click": "playerctl play-pause",
-        "max-length": 50
+        "on-click-middle": "playerctl --player=mpv play-pause",
+        "on-scroll-down": "playerctl --player=mpv next",
+        "on-scroll-up": "playerctl --player=mpv previous",
+        "on-click-right": "nohup ~/.config/hypr/userscripts/play_music.sh >/dev/null 2>&1 &",
+        "max-length": 20
     },
     "custom/system": {
         "format": "",

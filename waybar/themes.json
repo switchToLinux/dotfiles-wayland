@@ -9,6 +9,11 @@
         ]
     },
     {
+        "name": "TOP-default",
+        "config": "TOP-default.json",
+        "style": "style_default.css"
+    },
+    {
         "name": "TOP-defo",
         "config": "TOP-defo.json",
         "style": "style_defo.css",

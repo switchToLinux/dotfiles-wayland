@@ -7,14 +7,16 @@
     "layer": "top",
     "position": "top",
     "modules-left": [
+        "custom/logo",
+        "custom/arrow14",
         "hyprland/workspaces",
         "custom/arrow10",
         "hyprland/window",
         "custom/arrow11"
     ],
     "modules-center": [
-        "custom/arrow6",
-        "mpd",
+        "custom/arrow0",
+        "custom/music",
         "custom/arrow13"
     ],
     "modules-right": [
