@@ -2,7 +2,8 @@
     {
         "name": "TOP-nord",
         "config": "TOP-nord.json",
-        "style": "nord.css",
+        "style": "style_nord.css",
+        "color": "auto_nord.css",
         "scripts": [
             "auto_color.sh"
         ]
@@ -10,7 +11,8 @@
     {
         "name": "TOP-defo",
         "config": "TOP-defo.json",
-        "style": "defo.css",
+        "style": "style_defo.css",
+        "color": "auto_defo.css",
         "scripts": [
             "auto_color.sh"
         ]

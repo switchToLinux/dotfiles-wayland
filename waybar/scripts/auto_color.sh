@@ -38,12 +38,9 @@ show_arrows() {
     echo  " "  # 平行四边形
     echo  " "  # 平行四边形2
     echo " "  # 火焰 fire
-    echo " "   # 波纹 wave
-    echo " "   # 点 dot
-    echo " "  # 圆 cycle
-    echo " "  # git branch
     echo " "  # 三角缺口
     echo " "  # 三角缺口2
+    echo "space space"  # 替换空格用途
 }
 
 
@@ -79,8 +76,13 @@ select_arrow() {
         notify-send "Error: arrow format invalid,len:${len}: [$selected_arrow]"
         exit 1
     fi
-    left_arr=${arrs[0]}
-    right_arr="$(echo -n ${arrs[1]} | sed 's/\n//g')"
+    if [[ "${arrs[0]}" =~ ^space  ]] ; then
+        left_arr=""
+        right_arr=""
+    else
+        left_arr=${arrs[0]}
+        right_arr="$(echo -n ${arrs[1]} | sed 's/\n//g')"
+    fi
 }
 # 读取并解析配置文件
 # 函数：解析模块并生成 CSS 规则

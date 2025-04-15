@@ -6,6 +6,7 @@
         background-color: @critical;
     }
 }
+
 /* Reset all styles */
 * {
     border: none;
@@ -15,20 +16,21 @@
     padding: 0;
     box-shadow: none;
     text-shadow: none;
-    icon-shadow: none;
+    -gtk-icon-shadow: none;
 }
 
-/*引入颜色搭配方案*/
-@import "../waybar/colors/nord.css";
+/*自动根据配置引入正确的颜色搭配方案*/
+@import "../waybar/color.css";
+
 /* 自动生成的颜色配置方案 */
 @import "../waybar/styles/autogen_color.css";
-
 
 /* The whole bar */
 #waybar {
     background-color: transparent;
     font-size: 10pt;
 }
+
 /* Each module */
 #battery,
 #clock,
@@ -47,12 +49,13 @@
 #custom-power,
 #workspaces button,
 #mpd,
-#custom-nope,
 #custom-logo,
+#custom-nope,
 #mpris {
     padding-left: 10pt;
     padding-right: 12pt;
 }
+
 /* Each critical module */
 #mode,
 #memory.critical,

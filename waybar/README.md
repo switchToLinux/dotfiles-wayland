@@ -140,3 +140,4 @@ module 分类：
 ## 配置参考资料
 
 - [waybar-github](https://github.com/Alexays/Waybar/wiki)
+

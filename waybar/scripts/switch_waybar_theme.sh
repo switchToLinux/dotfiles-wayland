@@ -9,11 +9,12 @@
 config_dir="$HOME/.config/waybar/configs"
 styles_dir="$HOME/.config/waybar/styles"
 script_dir="$HOME/.config/waybar/scripts"
+color_dir="$HOME/.config/waybar/colors"
 
 # 定义 waybar 配置文件和样式文件的软链接路径
 config_link="$HOME/.config/waybar/config"
 style_link="$HOME/.config/waybar/style.css"
-
+color_link="$HOME/.config/waybar/color.css"
 
 show_themes() {
     jq -r '.[] | .name' $HOME/.config/waybar/themes.json
@@ -26,11 +27,18 @@ switch_theme() {
     [[ -z "$selected_theme" ]] && echo "未选择主题，退出" && exit 1
     selected_config=$(jq -r '.[] | select(.name == "'"$selected_theme"'") | .config' $HOME/.config/waybar/themes.json)
     selected_style=$(jq -r '.[] | select(.name == "'"$selected_theme"'") |.style' $HOME/.config/waybar/themes.json)
+    selected_color=$(jq -r '.[] | select(.name == "'"$selected_theme"'") |.color' $HOME/.config/waybar/themes.json)
+
+    echo "debug: $selected_theme $selected_config $selected_style $selected_color"
     [[ ! -f  "$config_dir/$selected_config" ]] && echo "未找到对应的配置文件，退出" && exit 1
     [[ ! -f  "$styles_dir/$selected_style" ]] && echo "未找到对应的样式文件，退出" && exit 1
+    [[ ! -f  "$color_dir/$selected_color" ]] && echo "未找到对应的颜色文件，退出" && exit 1
     ln -sf "$config_dir/$selected_config" "$config_link"
     ln -sf "$styles_dir/$selected_style" "$style_link"
+    ln -sf "$color_dir/$selected_color" "$color_link"
 
+    # 执行脚本
+    echo "执行脚本"
     for script in $(jq -r '.[] | select(.name == "'"$selected_theme"'") | .scripts[]' $HOME/.config/waybar/themes.json) ; do
         chmod +x $script_dir/${script} 
         $script_dir/${script}  >/tmp/a.log 2>&1

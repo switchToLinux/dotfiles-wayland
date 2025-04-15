@@ -13,7 +13,7 @@ show_layout() {
 switch_layout() {
     local select_layout="$1"
     [[ -z "$select_layout" ]] && notify-send "Error: invalid layout[$select_layout]" && exit 1
-    sed -i 's/"position" =.*$/"position" = '"${select_layout}"'/' ${CONFIG_FILE}
+    sed -i 's/"position".*$/"position" : '\"${select_layout}\",'/' ${CONFIG_FILE}
 }
 
 
