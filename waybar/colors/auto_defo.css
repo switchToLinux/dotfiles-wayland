@@ -13,11 +13,12 @@
 /* foreground color schema , 前景色用途，避免与 color0-9重复 */
 @define-color color10 #ffffff;
 @define-color color11 #336580;
+@define-color color12 #d9926e;
 
 /* used by module color schema */
 @define-color foreground @color10;
 @define-color background @color0;
-@define-color focused @color11;
+@define-color focused @color12;
 @define-color cursor @color0;
 @define-color urgent @color8;
 @define-color critical @color2;

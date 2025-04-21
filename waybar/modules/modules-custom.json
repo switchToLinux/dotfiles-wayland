@@ -23,22 +23,31 @@
         "on-click": "wofi"
     },
     "custom/music": {
-        "format": "🎜 {}",
+        "format": " {} ",
+        "escape": true,
         "interval": 5,
         "tooltip": true,
         "format-icons": {
             "default": "🎜"
         },
-        "exec": "playerctl metadata --format='{{ artist }} - {{ title }}'",
-        "on-click": "playerctl play-pause",
+        "exec": "playerctl --player=mpv metadata --format='🎜 {{ title }} - {{ artist }} {{ album }} ' || echo '🎜' ",
+        "on-click": "playerctl --player=mpv play-pause",
         "on-click-middle": "playerctl --player=mpv play-pause",
         "on-scroll-down": "playerctl --player=mpv next",
         "on-scroll-up": "playerctl --player=mpv previous",
         "on-click-right": "nohup ~/.config/hypr/userscripts/play_music.sh >/dev/null 2>&1 &",
-        "max-length": 20
+        "max-length": 30
     },
     "custom/system": {
         "format": "",
+        "tooltip": false
+    },
+    "custom/expand": {
+        "format": "",
+        "tooltip": false
+    },
+    "custom/cool": {
+        "format": "",
         "tooltip": false
     },
     "custom/nope": {

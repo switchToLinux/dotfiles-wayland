@@ -1,17 +1,19 @@
 {
-    "group/hardware": {
+    "group/hardwares": {
         "orientation": "inherit",
         "drawer": {
             "transition-duration": 300,
-            "children-class": "not-memory",
+            "children-class": "hardwares-info",
+            "click-to-reveal": true,
             "transition-left-to-right": false
         },
         "modules": [
-            "custom/system",
-            "disk",
+            "custom/expand",
             "cpu",
             "memory",
-            "hyprland/language"
+            "temperature",
+            "load",
+            "battery"
         ]
     }
 }

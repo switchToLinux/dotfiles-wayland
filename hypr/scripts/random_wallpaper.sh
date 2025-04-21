@@ -39,10 +39,13 @@ WALLPAPER_DIR=""
 env_file=~/.wallpaper.cfg
 
 get_wallpaper_dir() {
-    if command -v zenity &>/dev/null; then
-        selected_dir=$(zenity --file-selection --directory)
-    elif [ -f "$env_file" ]; then
-        selected_dir=$(cat "$env_file" | wofi -dmenu -p "Select Wallpaper Directory" --sort-order alphabetical)
+    if [ -f "$env_file" ]; then
+        selected_dir=$( (cat "$env_file" && echo "..." ) | wofi -dmenu -p "Select Wallpaper Directory" --sort-order alphabetical)
+    fi
+    if [[ "$selected_dir" == "..." ]] ; then 
+        if command -v zenity &>/dev/null; then   # 通过对话框设置选择新目录
+            selected_dir=$(zenity --file-selection --directory)
+        fi
     fi
     [[ -z "$selected_dir" ]] && selected_dir=$DEFAULT_WALLPAPER_DIR
     # 检查目录是否存在

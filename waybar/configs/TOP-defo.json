@@ -2,6 +2,7 @@
     "include": [
         "$HOME/.config/waybar/modules/modules.json",
         "$HOME/.config/waybar/modules/modules-custom.json",
+        "$HOME/.config/waybar/modules/modules-group.json",
         "$HOME/.config/waybar/modules/modules-autogen.json"
     ],
     "layer": "top",
@@ -15,19 +16,18 @@
         "custom/arrow11"
     ],
     "modules-center": [
-        "custom/arrow0",
+        "clock",
+        "custom/arrow15",
         "custom/music",
         "custom/arrow13"
     ],
     "modules-right": [
         "custom/arrow9",
-        "pulseaudio",
+        "group/hardwares",
         "custom/arrow4",
-        "tray",
-        "custom/arrow3",
-        "temperature",
+        "pulseaudio",
         "custom/arrow2",
-        "clock",
+        "tray",
         "custom/arrow1",
         "custom/power"
     ],

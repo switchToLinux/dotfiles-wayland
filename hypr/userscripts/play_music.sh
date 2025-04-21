@@ -8,8 +8,12 @@
 # Variables
 mDIR="$HOME/音乐"
 env_file="/tmp/local_music.list"
+online_music_file="/tmp/online_music.list"
+SEP="|"  # title与 url 的分隔符
+
+declare -A online_music
 # Online Stations. Edit as required
-declare -A online_music=(
+declare -A online_music_list=(
   ["FM - Easy Rock 96.3 📻🎶"]="https://radio-stations-philippines.com/easy-rock"
   ["FM - Easy Rock - Baguio 91.9 📻🎶"]="https://radio-stations-philippines.com/easy-rock-baguio" 
   ["FM - Love Radio 90.7 📻🎶"]="https://radio-stations-philippines.com/love"
@@ -29,16 +33,26 @@ declare -A online_music=(
   ["YT - Relaxing Piano Jazz Music 🎹🎶"]="https://youtu.be/85UEqRat6E4?si=jXQL1Yp2VP_G6NSn"
 )
 
+stop_music() {
+  # Check if music is already playing
+  ps -ef | grep mpv | grep -v mpvpaper | grep 'vid=no' | awk '{ print $2 }' | xargs kill
+  sleep 1
+}
+start_play_music() {
+  stop_music
+  mpv --shuffle --loop-playlist --vid=no "$@"
+}
+
 get_music_dir() {
   if [ -f "$env_file" ]; then
-      selected_dir=$( (cat "$env_file" && echo "..." ) | wofi -dmenu -p "Select Wallpaper Directory" --sort-order alphabetical)
+      selected_dir=$( (cat "$env_file" && echo "..." ) | wofi -dmenu -p "Select Music Directory" --sort-order alphabetical)
   fi
   if [[ "$selected_dir" == "..." ]] ; then 
     if command -v zenity &>/dev/null; then   # 通过对话框设置选择新目录
       selected_dir=$(zenity --file-selection --directory)
     fi
   fi
-  [[ -z "$selected_dir" ]] && selected_dir=$mDIR
+  [[ -z "$selected_dir" ]] && return 1
   # 如果目录为新增的目录，则将其添加到 .env 文件中
   if ! grep -q "^$selected_dir$" "$env_file" 2>/dev/null; then
       echo "$selected_dir" >> "$env_file"
@@ -50,6 +64,7 @@ populate_local_music() {
   local_music=()
   filenames=()
   selected_dir=$(get_music_dir)
+  [[ -z "$selected_dir" ]] && notification "please select a valid directory, first" && return 1
   while IFS= read -r file; do
     local_music+=("$file")
     filenames+=("$(basename "$file")")
@@ -64,6 +79,7 @@ notification() {
 # Main function for playing local music
 play_local_music() {
   populate_local_music
+  [[ "$?" != "0" ]] && notification "populate_local_music got error!"  && return 1
 
   # Prompt the user to select a song
   choice=$(printf "%s\n" "${filenames[@]}" | wofi  --dmenu)
@@ -75,8 +91,8 @@ play_local_music() {
   # Find the corresponding file path based on user's choice and set that to play the song then continue on the list
   for (( i=0; i<"${#filenames[@]}"; ++i )); do
     if [ "${filenames[$i]}" = "$choice" ]; then
-		
-	    notification "$choice"
+      stop_music
+      notification "$choice"
       mpv --playlist-start="$i" --loop-playlist --vid=no  "${local_music[@]}"
 
       break
@@ -89,64 +105,67 @@ shuffle_local_music() {
   notification "Shuffle Play local music"
   
   selected_dir=$(get_music_dir)
+  [[ -z "$selected_dir" ]] && notification "please select a valid directory, first" && return 1
   # Play music in $mDIR on shuffle
-  mpv --shuffle --loop-playlist --vid=no "$selected_dir"
+  start_play_music "$selected_dir"
 }
+
 
 # Main function for playing online music
 play_online_music() {
-  choice=$(for online in "${!online_music[@]}"; do
-      echo "$online"
-    done | sort | wofi --dmenu)
+  if [[ -f "$online_music_file" ]] ; then
+    # 读取文件并恢复数组
+    while IFS="${SEP}" read -r key value; do
+      [[ -z "$key" || -z "$value" ]] && continue
+      online_music["$key"]="$value"
+    done <  $online_music_file
+  else
+    online_music=$online_music_list
+    for key in "${!online_music_list[@]}"; do
+      online_music["$key"]=${online_music_list["$key"]}
+      echo ${key}${SEP}${online_music_list["$key"]} >> $online_music_file
+    done
+  fi
 
+  choice=$( for online in "${!online_music[@]}"; do  echo "$online" ; done | wofi --dmenu --sort-order alphabetical -p "add playlist format: title|link ")
   if [ -z "$choice" ]; then
     exit 1
   fi
-
-  link="${online_music[$choice]}"
-
-  notification "$choice"
-  
-  # Play the selected online music using mpv
-  mpv --shuffle --vid=no "$link"
-}
-
-# Function to stop music and kill mpv processes
-stop_music() {
-  mpv_pids=$(pgrep -x mpv)
-
-  if [ -n "$mpv_pids" ]; then
-    # Get the PID of the mpv process used by mpvpaper (using the unique argument added)
-    mpvpaper_pid=$(ps aux | grep -- 'unique-wallpaper-process' | grep -v 'grep' | awk '{print $2}')
-
-    for pid in $mpv_pids; do
-      if ! echo "$mpvpaper_pid" | grep -q "$pid"; then
-        kill -9 $pid || true 
-      fi
-    done
-    notify-send -u low -i "$iDIR/music.png" "Music stopped" || true
+  link=${online_music["$choice"]}
+  if [[ -z "$link" ]] ; then # 可能添加新链接
+    IFS="$SEP"  read -r key value  <<< "$choice"
+    if [[ ! -z "$key" && ! -z "$value" && "$value" =~ ^https: ]] ; then
+      echo "$key${SEP}${value}"  >> $online_music_file
+      choice="$key"
+      link="$value"
+    fi
   fi
+  echo "choice:$choice"
+  echo "link=$link"
+  notification "$choice"
+  start_play_music "$link"
 }
 
-# Check if music is already playing
-if pgrep -x "mpv" > /dev/null; then
-  stop_music
-else
-  user_choice=$(printf "Play from Online Stations\nPlay from Music directory\nShuffle Play from Music directory" | wofi --dmenu)
+show_menu() {
+  echo "1 播放在线音乐(Online Music)"
+  echo "2 播放本地音乐(Local Music)"
+  echo "3 随机本地音乐(Shuffle Local Music)"
+}
 
-  echo "User choice: $user_choice"
+user_choice=$(show_menu| wofi --dmenu | cut -d" " -f1)
 
-  case "$user_choice" in
-    "Play from Music directory")
-      play_local_music
-      ;;
-    "Play from Online Stations")
-      play_online_music
-      ;;
-    "Shuffle Play from Music directory")
-      shuffle_local_music
-      ;;
-    *)
-      ;;
-  esac
-fi
+echo "User choice: $user_choice"
+
+case "$user_choice" in
+  "1")
+    play_online_music
+    ;;
+  "2")
+    play_local_music
+    ;;
+  "3")
+    shuffle_local_music
+    ;;
+  *)
+    ;;
+esac

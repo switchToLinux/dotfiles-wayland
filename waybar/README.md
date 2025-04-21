@@ -8,6 +8,10 @@
 | TOP-Default |  ![img](https://i.imgur.com/pVH8S5e.png) |
 | TOP-cjbassi |  ![img](https://i.imgur.com/Qbj43Uz.png) |
 |TOP-mxkrsv | ![](https://camo.githubusercontent.com/61190e7030801b657a2507fbc5f330db4b040cb69fb330a7122118e15de96162/68747470733a2f2f692e696d6775722e636f6d2f627974427046442e706e67)|
+|  Mubin's Gruvboxed| ![img](https://raw.githubusercontent.com/MubinMuhammad/MinimalSwayFX/refs/heads/main/assets/waybar.png)|
+| Whiteshadow's | ![img](https://private-user-images.githubusercontent.com/116454864/400162079-6bd7f98e-1d4a-4c82-92ba-c74a63bbb908.png?jwt=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJnaXRodWIuY29tIiwiYXVkIjoicmF3LmdpdGh1YnVzZXJjb250ZW50LmNvbSIsImtleSI6ImtleTUiLCJleHAiOjE3NDQ3ODc4NDMsIm5iZiI6MTc0NDc4NzU0MywicGF0aCI6Ii8xMTY0NTQ4NjQvNDAwMTYyMDc5LTZiZDdmOThlLTFkNGEtNGM4Mi05MmJhLWM3NGE2M2JiYjkwOC5wbmc_WC1BbXotQWxnb3JpdGhtPUFXUzQtSE1BQy1TSEEyNTYmWC1BbXotQ3JlZGVudGlhbD1BS0lBVkNPRFlMU0E1M1BRSzRaQSUyRjIwMjUwNDE2JTJGdXMtZWFzdC0xJTJGczMlMkZhd3M0X3JlcXVlc3QmWC1BbXotRGF0ZT0yMDI1MDQxNlQwNzEyMjNaJlgtQW16LUV4cGlyZXM9MzAwJlgtQW16LVNpZ25hdHVyZT03MzBlZTBmZTk3MGQxODg4ZjM2OGMwY2NlNzdiNzEzYmQ4MTM2OWEyOTYzZTBkMzFjNzk0NDI3Mzk4NjExMzdiJlgtQW16LVNpZ25lZEhlYWRlcnM9aG9zdCJ9.0kzit8NryboBqUpoeMKcUsf0a139VKy_g88YKA3XIKM)|
+
+
 
 
 ##主题设计

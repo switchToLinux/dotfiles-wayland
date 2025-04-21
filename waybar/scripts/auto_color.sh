@@ -12,7 +12,7 @@ right_arr=""
 
 # 函数：生成 CSS 规则
 generate_css() {
-    local module_name=$(echo $1 | sed 's/\//-/g;s/#/\./g;s/^hyprland-//g' )
+    local module_name=$(echo $1 | sed 's/\//-/g;s/#/\./g;s/^hyprland-//g;s/^group-//g' )
     local background=$2
     local color=$3
     local font_size=$DEFAULT_FONT
@@ -116,9 +116,9 @@ parse_modules() {
                 generate_css "$module" "transparent" "transparent"
             current_position=$((current_position + 1))
             continue
-        elif [[ "$module" =~ ^group/.*$ ]]; then  # 分组模块
-            current_position=$((current_position + 1))
-            continue
+        # elif [[ "$module" =~ ^group/.*$ ]]; then  # 分组模块
+        #     current_position=$((current_position + 1))
+        #     continue
         elif [[ "$module" =~ ^custom/arrow1[0-9]$ ]]; then
             current_separator_color="${module:13:1}"
             generate_arrow_module "$module"
