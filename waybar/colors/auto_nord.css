@@ -12,7 +12,7 @@
 @define-color nord10 #5e81ac;
 @define-color nord11 #bf616a;
 @define-color nord12 #d08770;
-@define-color nord13 #EBCB8B;
+@define-color nord13 #FF8000;
 @define-color nord14 #A3BE8C;
 @define-color nord15 #B48EAD;
 
@@ -33,7 +33,7 @@
 @define-color foreground @nord4;
 @define-color background @nord0;
 @define-color cursor @nord5;
-@define-color focused @nord10;
+@define-color focused @nord15;
 @define-color urgent @nord13;
 @define-color critical @nord11;
 @define-color warning @nord13;

@@ -34,7 +34,8 @@ switch_theme() {
     [[ ! -f  "$styles_dir/$selected_style" ]] && echo "未找到对应的样式文件 $selected_style，退出" && exit 1
     if [[ ! -z "$selected_color" && "$selected_color" != "null" ]] ; then
         [[ ! -f  "$color_dir/$selected_color" ]] && echo "未找到对应的颜色文件，退出" && exit 1
-        ln -sf "$color_dir/$selected_color" "$color_link"
+        [[ -f  "$color_link" ]] && rm "$color_link"
+        cp -f "$color_dir/$selected_color" "$color_link"
     fi
     ln -sf "$config_dir/$selected_config" "$config_link"
     ln -sf "$styles_dir/$selected_style" "$style_link"

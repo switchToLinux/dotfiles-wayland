@@ -6,6 +6,7 @@
     ],
     "layer": "top",
     "position": "top",
+    "height": 12,
     "modules-left": [
         "hyprland/workspaces",
         "custom/arrow11",
@@ -13,7 +14,7 @@
         "custom/arrow12"
     ],
     "modules-center": [
-        "mpd",
+        "custom/music",
         "custom/arrow13"
     ],
     "modules-right": [

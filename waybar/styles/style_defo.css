@@ -28,7 +28,9 @@
 /* The whole bar */
 #waybar {
     background-color: transparent;
-    font-size: 10pt;
+    font-family: "JetBrainsMono Nerd Font";
+    font-size: 12pt;
+    font-weight: bold;
 }
 
 /* Each module */
@@ -79,9 +81,9 @@
 }
 
 #workspaces button {
-    border-radius: 8px;
-    border:1px solid @background;
-    box-shadow: 0px 0px 4px rgba(0, 0, 0, .8);
+    /* border-radius: 8px; */
+    /* border:1px solid @background; */
+    /* box-shadow: 0px 0px 4px rgba(0, 0, 0, .8); */
     transition: all .3s ease;
 }
 #workspaces button.active {

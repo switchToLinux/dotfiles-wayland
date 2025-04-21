@@ -27,7 +27,9 @@
 /* The whole bar */
 #waybar {
     background-color: transparent;
-    font-size: 10pt;
+    font-family: "JetBrainsMono Nerd Font";
+    font-size: 12pt;
+    font-weight: bold;
 }
 /* Each module */
 #battery,

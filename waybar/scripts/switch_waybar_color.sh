@@ -18,6 +18,7 @@ switch_color() {
     [[ -z "$select_color" ]] && notify-send "Error: invalid color[$select_color]" && exit 1
     # 替换配置文件中的颜色方案
     # sed -i 's#^.*"../waybar/colors/.*css.*$#@import "../waybar/colors/'$select_color'.css";#' ${STYLE_FILE}
+    [[ -f "$COLOR_FILE" ]] && rm "$COLOR_FILE"
     cp -f "$COLORS_DIR/$select_color.css" "$COLOR_FILE"
     
     echo "select color: $select_color"

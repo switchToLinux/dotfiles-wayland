@@ -5,8 +5,8 @@ CONFIG_FILE="$HOME/.config/waybar/config"
 OUTPUT_FILE="$HOME/.config/waybar/styles/autogen_color.css"
 ARROW_MODULE_FILE="$HOME/.config/waybar/modules/modules-autogen.json"
 
-DEFAULT_FONT="12pt"
-DEFAULT_ARROW_FONT="16pt"
+DEFAULT_FONT="10pt"
+DEFAULT_ARROW_FONT="13pt"
 left_arr=""
 right_arr=""
 
@@ -16,17 +16,25 @@ generate_css() {
     local background=$2
     local color=$3
     local font_size=$DEFAULT_FONT
+    # echo "module_info: $module_name : $background , $color , $font_size"
    if [[ "$module_name" =~ ^(custom-arrow|custom-logo|custom-power) ]]; then
         font_size=$DEFAULT_ARROW_FONT
+        {
+            echo "#$module_name {"
+            echo "    font-size: ${font_size};"
+            echo "    color: $color;"
+            echo "    background-color: $background;" 
+            echo "}"
+        } >> "$OUTPUT_FILE"
+    else
+        {
+            echo "#$module_name {"
+            echo "    font-size: ${font_size};"
+            echo "    color: $color;"
+            echo "    background-color: $background;"
+            echo "}"
+        } >> "$OUTPUT_FILE"
     fi
-    echo "module_info: $module_name : $background , $color , $font_size"
-    {
-        echo "#$module_name {"
-        echo "    font-size: ${font_size};"
-        echo "    color: $color;"
-        echo "    background-color: $background;" 
-        echo "}"
-    } >> "$OUTPUT_FILE"
 }
 
 show_arrows() {

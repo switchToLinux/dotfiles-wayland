@@ -18,7 +18,7 @@
 |  terminal | xfce4-terminal  |  终端程序   |
 | bluetooth |  blueman |  蓝牙程序   |
 |  editor |  neovim |  一个高度可定制化的编辑器程序   |
-|  browser |  firefox |  一个高度可定制化的浏览器程序   |
+|  browser |  firefox |  可定制化的浏览器程序,[推荐配置参考ShyFox](https://github.com/Naezr/ShyFox)  |
 |  media player |  mpv |  一个高度可定制化的媒体播放器程序   |
 |  file manager |  thunar |  一个高度可定制化的文件管理器程序   |
 |Terminal File Manager|[yazi](https://github.com/sxyazi/yazi) written in Rust.| 高效的非阻塞文件管理器 |
