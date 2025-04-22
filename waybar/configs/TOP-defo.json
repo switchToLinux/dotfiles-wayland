@@ -7,7 +7,7 @@
     ],
     "layer": "top",
     "position": "top",
-    "height": 20,
+    "height": 14,
     "modules-left": [
         "custom/logo",
         "custom/arrow14",
@@ -28,6 +28,8 @@
         "custom/arrow9",
         "group/hardwares",
         "custom/arrow4",
+        "group/tools",
+        "custom/arrow3",
         "pulseaudio",
         "custom/arrow2",
         "tray",

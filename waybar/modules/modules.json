@@ -39,8 +39,9 @@
     },
     "hyprland/window": {
     "format": "{}",
-    "tooltip": false,
+    "tooltip": true,
     "min-length": 5,
+    "max-length": 40,
 
     "rewrite": {
         // Desktop
@@ -48,9 +49,7 @@
         "<span foreground='#89b4fa'> </span> Hyprland",
 
         // Terminal
-        "~": "  Terminal",
-        "zsh": "  Terminal",
-        "kitty": "  Terminal",
+        "Terminal - (.*)": " 󰮯- $1",
 
         "tmux(.*)": 
         "<span foreground='#a6e3a1'> </span> Tmux",
@@ -105,39 +104,7 @@
         "<span foreground='#fab387'> 󰕼 </span> $1",
 
         "(.*) - mpv": 
-        "<span foreground='#cba6f7'>  </span> $1",
-
-        "qView": "  qView",
-
-        "(.*).jpg": "  $1.jpg",
-        "(.*).png": "  $1.png",
-        "(.*).svg": "  $1.svg",
-
-        // Social
-
-        "vesktop": 
-        "<span foreground='#89b4fa'> </span> Discord",
-
-        "• Discord(.*)": "Discord$1",
-        "(.*)Discord(.*)": 
-        "<span foreground='#89b4fa'> </span> $1Discord$2",
-
-        // Documents
-
-        "ONLYOFFICE Desktop Editors": 
-        "<span foreground='#f38ba8'> </span> OnlyOffice Desktop",
-
-        "(.*).docx": 
-        "<span foreground='#89b4fa'> </span> $1.docx",
-        "(.*).xlsx": 
-        "<span foreground='#a6e3a1'> </span> $1.xlsx",
-        "(.*).pptx": 
-        "<span foreground='#fab387'> </span> $1.pptx",
-        "(.*).pdf": 
-        "<span foreground='#f38ba8'> </span> $1.pdf",
-
-        // System
-        "Authenticate": "  Authenticate"
+        "<span foreground='#cba6f7'>  </span> $1"
     }
     },
 

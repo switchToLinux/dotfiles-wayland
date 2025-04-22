@@ -5,8 +5,8 @@ CONFIG_FILE="$HOME/.config/waybar/config"
 OUTPUT_FILE="$HOME/.config/waybar/styles/autogen_color.css"
 ARROW_MODULE_FILE="$HOME/.config/waybar/modules/modules-autogen.json"
 
-DEFAULT_FONT="10pt"
-DEFAULT_ARROW_FONT="13pt"
+DEFAULT_FONT="11pt"
+DEFAULT_ARROW_FONT="14.58pt"
 left_arr=""
 right_arr=""
 
@@ -17,7 +17,7 @@ generate_css() {
     local color=$3
     local font_size=$DEFAULT_FONT
     # echo "module_info: $module_name : $background , $color , $font_size"
-   if [[ "$module_name" =~ ^(custom-arrow|custom-logo|custom-power) ]]; then
+   if [[ "$module_name" =~ ^(custom-arrow|custom-logo|custom-power|custom-tools|custom-expand|custom-drawer) ]]; then
         font_size=$DEFAULT_ARROW_FONT
         {
             echo "#$module_name {"
@@ -38,13 +38,11 @@ generate_css() {
 }
 
 show_arrows() {
-    echo " "  # normal 实心三角
-    echo " "  # 直角三角形
-    echo  " " # 半圆
     echo  " " # 三角形-triangle
+    echo  " " # 半圆
+    echo " "  # 直角三角形
     echo  " "   # 三角边线
     echo  " "  # 平行四边形
-    echo  " "  # 平行四边形2
     echo " "  # 火焰 fire
     echo " "  # 三角缺口
     echo " "  # 三角缺口2

@@ -18,7 +18,7 @@
     },
     "custom/logo": {
         "format": "",
-        "format-alt": "",
+        "format-alt": "󰍲",
         "tooltip": false,
         "on-click": "wofi"
     },
@@ -27,10 +27,7 @@
         "escape": true,
         "interval": 5,
         "tooltip": true,
-        "format-icons": {
-            "default": "🎜"
-        },
-        "exec": "playerctl --player=mpv metadata --format='🎜 {{ title }} - {{ artist }} {{ album }} ' || echo '🎜' ",
+        "exec": "playerctl --player=mpv metadata --format='󰎇 {{ title }} - {{ artist }} {{ album }} ' || echo '  󰎊  ' ",
         "on-click": "playerctl --player=mpv play-pause",
         "on-click-middle": "playerctl --player=mpv play-pause",
         "on-scroll-down": "playerctl --player=mpv next",
@@ -47,12 +44,43 @@
         "min-length": 1,
         "max-length": 1
     },
+    "custom/cliphist": {
+        "format": "",
+        "on-click": "sleep 0.1 && cliphist list | wofi --dmenu | cliphist decode | wl-copy",
+        "on-click-right": "sleep 0.1 && cliphist list | wofi --dmenu | cliphist  delete",
+        "on-click-middle": "sleep 0.1 && cliphist wipe",
+        "tooltip-format": "Left: Open clipboard Manager\nRight: Delete an entry\nMiddle: Clear list"
+    },
     "custom/system": {
         "format": "",
         "tooltip": false
     },
+    "custom/hyprshade": {
+        "format": "󰽢",
+        "format-alt": "󰽧",
+        "tooltip-format": "Toggle Screen Shader",
+        "on-click": "hyprshade toggle blue-light-filter-75",
+        "on-click-right": "sleep 0.5; ~/.config/hypr/scripts/hyprshade.sh rofi"
+    },
+    "custom/recoder": {
+        "format": "󰐊",
+        "format-alt":"󰏤",
+        "tooltip-format": "Left Click: Start Recording\nRight Click: Stop Recording",
+        "on-click": "( pidof obs && pkill obs) || obs --startrecording --minimize-to-tray --disable-shutdown-check",
+        "on-click-right": "pidof obs && pkill obs"
+    },
+
+
     "custom/expand": {
-        "format": "",
+        "format": "󰮸",
+        "tooltip": false
+    },
+    "custom/tools": {
+        "format": "󱌣",
+        "tooltip-format": "Tools"
+    },
+    "custom/drawer": {
+        "format": "󰶢",
         "tooltip": false
     },
     "custom/cool": {
