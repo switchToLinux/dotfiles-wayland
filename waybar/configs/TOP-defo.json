@@ -17,22 +17,19 @@
         "custom/arrow11"
     ],
     "modules-center": [
-        "custom/arrow8",
-        "clock#time",
-        "clock#date",
-        "custom/arrow15",
-        "custom/music",
+        "custom/arrow5",
+        "wlr/taskbar",
         "custom/arrow13"
     ],
     "modules-right": [
         "custom/arrow9",
-        "group/hardwares",
+        "group/media",
         "custom/arrow4",
         "group/tools",
         "custom/arrow3",
-        "pulseaudio",
-        "custom/arrow2",
         "tray",
+        "custom/arrow8",
+        "group/date",
         "custom/arrow1",
         "custom/power"
     ],

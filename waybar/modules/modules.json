@@ -2,10 +2,11 @@
     "wlr/taskbar": {
         "format": "{icon}",
         "on-click": "activate",
+        "on-click-middle": "close",
         "on-click-right": "fullscreen",
         "icon-theme": "WhiteSur",
-        "icon-size": 25,
-        "on-click-middle": "close",
+        "icon-size": 20,
+        "spacing": 5,
         "ignore-list": [
             "Alacritty"
         ],
@@ -285,5 +286,5 @@
             "locked": "",
             "unlocked": ""
         }
-    },
+    }
 }

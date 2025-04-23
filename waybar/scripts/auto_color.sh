@@ -12,29 +12,23 @@ right_arr=""
 
 # 函数：生成 CSS 规则
 generate_css() {
-    local module_name=$(echo $1 | sed 's/\//-/g;s/#/\./g;s/^hyprland-//g;s/^group-//g' )
+    local module_name=$(echo $1 | sed 's/\//-/g;s/#/\./g;s/^hyprland-//g;s/^group-//g;s/^wlr-//g' )
     local background=$2
     local color=$3
     local font_size=$DEFAULT_FONT
     # echo "module_info: $module_name : $background , $color , $font_size"
    if [[ "$module_name" =~ ^(custom-arrow|custom-logo|custom-power|custom-tools|custom-expand|custom-drawer) ]]; then
         font_size=$DEFAULT_ARROW_FONT
-        {
-            echo "#$module_name {"
-            echo "    font-size: ${font_size};"
-            echo "    color: $color;"
-            echo "    background-color: $background;" 
-            echo "}"
-        } >> "$OUTPUT_FILE"
-    else
-        {
-            echo "#$module_name {"
-            echo "    font-size: ${font_size};"
-            echo "    color: $color;"
-            echo "    background-color: $background;"
-            echo "}"
-        } >> "$OUTPUT_FILE"
+    elif [[ "$module_name" =~ ^(custom-sep) ]] ; then
+        font_size="1px"
     fi
+    {
+        echo "#$module_name {"
+        echo "    font-size: ${font_size};"
+        echo "    color: $color;"
+        echo "    background-color: $background;"
+        echo "}"
+    } >> "$OUTPUT_FILE"
 }
 
 show_arrows() {

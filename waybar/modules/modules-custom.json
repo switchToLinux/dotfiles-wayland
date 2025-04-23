@@ -45,10 +45,10 @@
         "max-length": 1
     },
     "custom/cliphist": {
-        "format": "",
-        "on-click": "sleep 0.1 && cliphist list | wofi --dmenu | cliphist decode | wl-copy",
-        "on-click-right": "sleep 0.1 && cliphist list | wofi --dmenu | cliphist  delete",
-        "on-click-middle": "sleep 0.1 && cliphist wipe",
+        "format": "󰆐",
+        "on-click": "sleep 0.1 && cliphist list | wofi --dmenu -p Copy | cliphist decode | wl-copy",
+        "on-click-right": "sleep 0.1 && cliphist list | wofi --dmenu -p 'Delete' | cliphist  delete",
+        "on-click-middle": "sleep 0.1 && cliphist wipe && notify-send 'Clipboard cleared' ",
         "tooltip-format": "Left: Open clipboard Manager\nRight: Delete an entry\nMiddle: Clear list"
     },
     "custom/system": {
@@ -56,18 +56,18 @@
         "tooltip": false
     },
     "custom/hyprshade": {
-        "format": "󰽢",
+        "format": "󰇄",
         "format-alt": "󰽧",
         "tooltip-format": "Toggle Screen Shader",
         "on-click": "hyprshade toggle blue-light-filter-75",
         "on-click-right": "sleep 0.5; ~/.config/hypr/scripts/hyprshade.sh rofi"
     },
     "custom/recoder": {
-        "format": "󰐊",
-        "format-alt":"󰏤",
+        "format": "󰍫",
+        "format-alt":"󰃾",
         "tooltip-format": "Left Click: Start Recording\nRight Click: Stop Recording",
-        "on-click": "( pidof obs && pkill obs) || obs --startrecording --minimize-to-tray --disable-shutdown-check",
-        "on-click-right": "pidof obs && pkill obs"
+        "on-click": "( pidof obs && pkill obs) || obs --startrecording --minimize-to-tray --disable-shutdown-check && notify-send 'Recording Started'",
+        "on-click-right": "pidof obs && pkill obs && notify-send 'Recording Stopped'"
     },
 
 
@@ -79,12 +79,16 @@
         "format": "󱌣",
         "tooltip-format": "Tools"
     },
+    "custom/media": {
+        "format": "󰽰",
+        "tooltip": false
+    },
     "custom/drawer": {
         "format": "󰶢",
         "tooltip": false
     },
-    "custom/cool": {
-        "format": "",
+    "custom/sep": {
+        "format": "󰨕",
         "tooltip": false
     },
     "custom/nope": {
