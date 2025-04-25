@@ -41,13 +41,17 @@ env_file=~/.wallpaper.cfg
 get_wallpaper_dir() {
     if [ -f "$env_file" ]; then
         selected_dir=$( (cat "$env_file" && echo "..." ) | wofi -dmenu -p "Select Wallpaper Directory" --sort-order alphabetical)
+    else
+        selected_dir="..."
     fi
     if [[ "$selected_dir" == "..." ]] ; then 
         if command -v zenity &>/dev/null; then   # 通过对话框设置选择新目录
             selected_dir=$(zenity --file-selection --directory)
+        else
+            selected_dir=$(wofi -dmenu -p "Select Wallpaper Directory" --sort-order alphabetical)
         fi
     fi
-    [[ -z "$selected_dir" ]] && selected_dir=$DEFAULT_WALLPAPER_DIR
+    [[ -z "$selected_dir" ]]  && notify-send "Error: No wallpaper directory selected" && exit 1
     # 检查目录是否存在
     if [ ! -d "$selected_dir" ]; then
         notify-send "Error: $selected_dir is not a directory"
@@ -170,6 +174,7 @@ done
 # 如果没有指定目录，使用 wofi 选择
 if [ -z "$WALLPAPER_DIR" ]; then
     WALLPAPER_DIR=$(get_wallpaper_dir)
+    [[ "$?" -ne "0" ]] && exit 1
 fi
 
 # 如果没有指定命令，使用 wofi 选择

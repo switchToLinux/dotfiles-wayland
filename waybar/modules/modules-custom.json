@@ -1,6 +1,6 @@
 {
     "custom/power": {
-        "format": "󰤆",
+        "format": "",
         "tooltip": false,
         "on-click": "~/.config/hypr/scripts/show_power_menu.sh"
     },
@@ -66,8 +66,8 @@
         "format": "󰍫",
         "format-alt":"󰃾",
         "tooltip-format": "Left Click: Start Recording\nRight Click: Stop Recording",
-        "on-click": "( pidof obs && pkill obs) || obs --startrecording --minimize-to-tray --disable-shutdown-check && notify-send 'Recording Started'",
-        "on-click-right": "pidof obs && pkill obs && notify-send 'Recording Stopped'"
+        "on-click": "notify-send 'Recording Started' && wf-recorder -g \"$(slurp)\" -f ~/Videos/area_$(date +%Y%m%d_%H%M%S).mp4 ",
+        "on-click-right": "pidof wf-recorder && pkill wf-recorder && notify-send 'Recording Stopped'"
     },
 
 

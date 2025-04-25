@@ -28,6 +28,7 @@
             "custom/media",
             "custom/music",
             "custom/sep",
+            "pulseaudio/slider",
             "pulseaudio"
         ]
     },
@@ -60,7 +61,11 @@
             "custom/sep",
             "bluetooth",
             "custom/sep",
-            "custom/hyprshade"
+            "battery",
+            "custom/sep",
+            "custom/hyprshade",
+            "custom/sep",
+            "tray"
         ]
     }
 }

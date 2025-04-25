@@ -129,8 +129,13 @@
         },
         "on-click": "pavucontrol"
     },
+    "pulseaudio/slider": {
+        "min": 0,
+        "max": 100,
+        "orientation": "horizontal"
+    },
     "bluetooth": {
-        "format": " {status}",
+        "format": "",
         "format-disabled": "",
         "format-connected": " {num_connections} connected",
         "tooltip-format": "{controller_alias}\t{controller_address}",
@@ -286,5 +291,12 @@
             "locked": "",
             "unlocked": ""
         }
+    },
+    "user": {
+        "format": "{user} (up {work_d} days ↑)",
+        "interval": 60,
+        "height": 30,
+        "width": 30,
+        "icon": true
     }
 }

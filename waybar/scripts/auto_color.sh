@@ -20,7 +20,7 @@ generate_css() {
    if [[ "$module_name" =~ ^(custom-arrow|custom-logo|custom-power|custom-tools|custom-expand|custom-drawer) ]]; then
         font_size=$DEFAULT_ARROW_FONT
     elif [[ "$module_name" =~ ^(custom-sep) ]] ; then
-        font_size="1px"
+        font_size="8px"
     fi
     {
         echo "#$module_name {"
