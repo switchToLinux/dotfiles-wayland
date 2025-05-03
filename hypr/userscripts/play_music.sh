@@ -7,8 +7,8 @@
 #     1. 增加 env_file 记录本地文件目录
 # Variables
 mDIR="$HOME/音乐"
-env_file="/tmp/local_music.list"
-online_music_file="/tmp/online_music.list"
+env_file="$HOME/.music_local.list"
+online_music_file="$HOME/.music_online.list"
 SEP="|"  # title与 url 的分隔符
 
 declare -A online_music
@@ -46,6 +46,8 @@ start_play_music() {
 get_music_dir() {
   if [ -f "$env_file" ]; then
       selected_dir=$( (cat "$env_file" && echo "..." ) | wofi -dmenu -p "Select Music Directory" --sort-order alphabetical)
+  else
+    selected_dir="..."
   fi
   if [[ "$selected_dir" == "..." ]] ; then 
     if command -v zenity &>/dev/null; then   # 通过对话框设置选择新目录
@@ -68,7 +70,9 @@ populate_local_music() {
   while IFS= read -r file; do
     local_music+=("$file")
     filenames+=("$(basename "$file")")
-  done < <(find -L "$selected_dir" -type f \( -iname "*.mp3" -o -iname "*.flac" -o -iname "*.wav" -o -iname "*.ogg" -o -iname "*.mp4" \))
+  done < <(find -L "$selected_dir" -type f \( -iname "*.mp3" -o -iname "*.flac" -o -iname "*.ape" \
+      -o -iname "*.wma" -o -iname "*.wav" -o -iname "*.ogg" -o -iname "*.mp4" -o -iname "*.dts" \
+      -o -iname "*.mkv" -o -iname "*.mov" \))
 }
 
 # Function for displaying notifications
