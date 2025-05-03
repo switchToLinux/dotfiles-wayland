@@ -116,18 +116,26 @@ play_online_music() {
   if [[ -f "$online_music_file" ]] ; then
     # 读取文件并恢复数组
     while IFS="${SEP}" read -r key value; do
+      [[ "$key" =~ ^#.*$ ]] && continue # 跳过注释行
+      [[ "$key" =~ ^\s*$ ]] && continue # 跳过空行
       [[ -z "$key" || -z "$value" ]] && continue
+
       online_music["$key"]="$value"
     done <  $online_music_file
   else
     online_music=$online_music_list
     for key in "${!online_music_list[@]}"; do
+      # 过滤掉空行和注释行
+      [[ "$key" =~ ^#.*$ ]] && continue # 跳过注释行
+      [[ "$key" =~ ^\s*$ ]] && continue # 跳过空行
+      [[ -z "$key" || -z "${online_music_list["$key"]}" ]] && continue
+
       online_music["$key"]=${online_music_list["$key"]}
       echo ${key}${SEP}${online_music_list["$key"]} >> $online_music_file
     done
   fi
 
-  choice=$( for online in "${!online_music[@]}"; do  echo "$online" ; done | wofi --dmenu --sort-order alphabetical -p "add playlist format: title|link ")
+  choice=$(for online in "${!online_music[@]}"; do  echo "$online" ; done | wofi --dmenu --sort-order alphabetical -p "add playlist: title|link ")
   if [ -z "$choice" ]; then
     exit 1
   fi

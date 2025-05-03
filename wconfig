@@ -68,7 +68,7 @@ declare -A package_set=(
     ["bar"]="waybar"
     ["launcher_menu"]="wofi"
     ["notification"]="mako dunst"
-    ["file_manager"]="thunar"
+    ["file_manager"]="thunar yazi ueberzugpp" # 支持terminal图片预览
     ["wallpaper"]="swww zenity"
     ["cliphist"]="cliphist wl-clipboard"
     ["terminal"]="xfce4-terminal kitty zsh tmux"
@@ -164,9 +164,10 @@ install_hyprland() {
 
 auto_install() {
     install_hyprland "no"
+    config_hyprland
 }
 
-config_hyprpaper() {
+config_hyprland() {
     dest_dir="~/.config/dotfiles-wayland"
     [[ -d "${dest_dir}" ]] && read -p "dest_dir ${dest_dir} already exists, do you want to continue? (y/n) " choice && [[  ! "${choice}" =~ ^[Yy]$ ]] && return 0
     [[ -d "${dest_dir}" ]] && rm -rf ${dest_dir}
@@ -209,11 +210,10 @@ config_grub() {
 }
 
 config_wallpaper() {
-    wallpaper_dir="~/wallpapers"
+    wallpaper_dir="$HOME/wallpapers"
     wall_url=https://github.com/D3Ext/aesthetic-wallpapers
-    [[ -d "${wallpaper_dir}" ]] && read -p "wallpaper_dir ${wallpaper_dir} already exists, do you want to continue? (y/n) " choice && [[ ! "${choice}" =~ ^[Yy]$ ]] && return 0
-    [[ -d "${wallpaper_dir}" ]] && rm -rf ${wallpaper_dir}
-    git clone --depth=1 ${wall_url}  ${wallpaper_dir}  >> ${ERR_FILE} 2>&1
+    [[ -d "${wallpaper_dir}" ]] && return 0
+    git clone --depth=1 ${wall_url} ${wallpaper_dir}  >> ${ERR_FILE} 2>&1
     [[ "$?" -ne "0" ]] && ERR "git clone ${wall_url} failed" && return 1
     LOG "config wallpaper success"
     notify "config wallpaper success"
@@ -221,7 +221,8 @@ config_wallpaper() {
 
 install_video_driver() {
     LOG "install video driver"
-    nvidia_driver="nvidia-dkms nvidia-utils lib32-nvidia-utils"
+    pkg_cmd=$(get_pack_cmd)
+    nvidia_driver="nvidia-dkms nvidia-utils"
     # 检查是否安装了 nvidia 显卡设备
     if lspci|grep -i nvidia|grep -i vga ; then
         LOG "Detected NVIDIA GPU, installing drivers..."
@@ -272,13 +273,15 @@ install_yay() {
     notify "Install aur success"
 }
 
+
 install_aur() {
     LOG "install aur"
     # 选择 install_paru 或者 install_yay
-    {
+    pkg_cmd=$(get_pack_cmd)
+    choice=$({
         echo "1. install_paru"
         echo "2. install_yay"
-    } | ${MENU_CMD} | awk -F'.' '{printf $1}' | \
+    } | ${MENU_CMD} | awk -F'.' '{printf $1}' )
     case "${choice}" in
         1)
             install_paru
@@ -324,20 +327,20 @@ enable_de() {
 }
 # 主菜单
 main_menu() {
-    echo "0. 全自动安装"
+    echo "0. install hyprland and config"
     echo "-------------------------"
-    echo "1. 安装 hyprland"
-    echo "2. 配置 hyprpaper"
-    echo "3. 配置 sddm主题"
-    echo "4. 配置 grub主题"
+    echo "1. install hyprland"
+    echo "2. config hyprland"
+    echo "3. config sddm theme"
+    echo "4. config grub theme"
     echo "-------------------------"
-    echo "a. 安装 aur"
-    echo "d. 安装显卡驱动"
-    echo "f. 安装字体"
-    echo "s. 启动SDDM桌面环境"
-    echo "w. 配置桌面壁纸"
+    echo "a. install aur"
+    echo "d. install video driver"
+    echo "f. install fonts"
+    echo "s. enable sddm"
+    echo "w. config wallpaper"
     echo "-------------------------"
-    echo "q. 退出"
+    echo "q. quit"
 }
 
 show_main_menu() {
@@ -349,7 +352,7 @@ do_main_menu() {
     choice=$(show_main_menu)
     case "${choice}" in
         1)      install_hyprland  ;;
-        2)      config_hyprpaper  ;;
+        2)      config_hyprland  ;;
         3)      config_sddm           ;;
         4)      config_grub          ;;
         0)      auto_install        ;;
@@ -365,5 +368,5 @@ do_main_menu() {
 
 
 check_depends  || exit 1
-
+pkg_cmd=$(get_pack_cmd)
 do_main_menu
