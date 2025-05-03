@@ -17,8 +17,7 @@
         }
     },
     "custom/logo": {
-        "format": "",
-        "format-alt": "󰍲",
+        "format": "󰍲",
         "tooltip": false,
         "on-click": "wofi"
     },
