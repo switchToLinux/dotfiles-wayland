@@ -75,6 +75,10 @@
     transition: all .3s ease;
 }
 
+#clock {
+    font-family:'WenQuanYi Zen Hei Mono'
+}
+
 #pulseaudio-slider slider {
     min-height: 0px;
     min-width: 0px;
