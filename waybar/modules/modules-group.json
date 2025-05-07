@@ -65,6 +65,8 @@
             "custom/sep",
             "custom/hyprshade",
             "custom/sep",
+            "custom/showmethekey",
+            "custom/drawer",
             "tray"
         ]
     }

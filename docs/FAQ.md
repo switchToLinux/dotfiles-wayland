@@ -109,3 +109,13 @@ TODO:暂时没有找到解决办法， 这个问题似乎是Chrome对 text-input
 #### Q: VSCode中打开终端使用fcitx输入法，输入中文后，会出现两次输入内容？
 
 TODO: 暂时没有找到解决办法
+
+### 截图软件
+
+#### Q: flameshot 无法截图？
+
+
+A: 重置截屏权限: 对于flameshot 启动正常，但是不显示截图界面，可以尝试重置截屏权限。
+```bash
+dbus-send --session  --print-reply=literal --dest=org.freedesktop.impl.portal.PermissionStore /org/freedesktop/impl/portal/PermissionStore org.freedesktop.impl.portal.PermissionStore.DeletePermission string:'screenshot' string:'screenshot' string:''
+```

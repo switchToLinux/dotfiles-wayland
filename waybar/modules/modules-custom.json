@@ -55,7 +55,7 @@
         "tooltip": false
     },
     "custom/hyprshade": {
-        "format": "󰇄",
+        "format": "󰃠",
         "format-alt": "󰽧",
         "tooltip-format": "Toggle Screen Shader",
         "on-click": "hyprshade toggle blue-light-filter-75",
@@ -67,8 +67,12 @@
         "tooltip-format": "Left Click: Start/Stop Recording",
         "on-click": "~/.config/waybar/scripts/toggle_video_recorder.sh"
     },
-
-
+    "custom/showmethekey": {
+        "format": " 󰥻 ",
+        "tooltip-format": "Left Click: Enable show me the key\nRight Click: Stop show me the key",
+        "on-click": "showmethekey-gtk -A -C",
+        "on-click-right": "pkill -f showmethekey-gtk"
+    },
     "custom/expand": {
         "format": "󰮸",
         "tooltip": false
