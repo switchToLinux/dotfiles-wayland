@@ -68,10 +68,11 @@
         "on-click": "~/.config/waybar/scripts/toggle_video_recorder.sh"
     },
     "custom/showmethekey": {
-        "format": " 󰥻 ",
-        "tooltip-format": "Left Click: Enable show me the key\nRight Click: Stop show me the key",
-        "on-click": "showmethekey-gtk -A -C",
-        "on-click-right": "pkill -f showmethekey-gtk"
+        "format": "󰥻 ",
+        "tooltip-format": "need install showmethekey package.\nMiddle Click: Enable show me the key\nRight Click: Stop show me the key",
+        "on-click": "command -v showmethekey-gtk >/dev/null && notify-send 'middle click to start showmethekey' || notify-send 'You need to install showmethekey package first'",
+        "on-click-middle": "showmethekey-gtk -A -C",
+        "on-click-right": "pidof showmethekey-gtk && notify-send 'showmethekey stoped' && pkill -f showmethekey-gtk"
     },
     "custom/expand": {
         "format": "󰮸",
