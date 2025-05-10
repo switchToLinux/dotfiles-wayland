@@ -32,4 +32,6 @@ case "$str_action" in
 esac
 
 # 重新加载 Waybar
-killall -SIGUSR2 waybar
+# killall -SIGUSR2 waybar
+killall waybar && sleep 0.5 && nohup waybar >/dev/null 2>&1 &
+

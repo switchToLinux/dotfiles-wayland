@@ -25,6 +25,7 @@
         "format": " {} ",
         "escape": true,
         "interval": 5,
+        "rotate": 90,
         "tooltip": true,
         "exec": "playerctl --player=mpv metadata --format='󰎇 {{ title }} - {{ artist }} {{ album }} ' || echo '  󰎊  ' ",
         "on-click": "playerctl --player=mpv play-pause",

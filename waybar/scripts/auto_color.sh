@@ -1,14 +1,28 @@
 #!/bin/bash
 
+usage() {
+    echo "Usage: $0 [arrow]"
+    echo "  arrow: 箭头类型，默认为 null"
+    exit 1
+}
+
 # 配置文件路径
+THEME_FILE=$HOME/.config/waybar/themes.json
 CONFIG_FILE="$HOME/.config/waybar/config"
 OUTPUT_FILE="$HOME/.config/waybar/styles/autogen_color.css"
 ARROW_MODULE_FILE="$HOME/.config/waybar/modules/modules-autogen.json"
 
-DEFAULT_FONT="11pt"
+DEFAULT_FONT="12pt"
 DEFAULT_ARROW_FONT="14.58pt"
 left_arr=""
 right_arr=""
+
+# 获取 arrow 参数
+default_arrow="$1"
+
+
+selected_theme="$(jq -r '.selected_theme' $THEME_FILE)"
+echo "selected_theme: $selected_theme"
 
 # 函数：生成 CSS 规则
 generate_css() {
@@ -63,7 +77,17 @@ select_arrow() {
     # 生成 modules/modules-arrow.json 文件
     # 格式 "X Y"
     local selected_arrow=
-    selected_arrow=$( show_arrows | wofi --dmenu )
+    if [[ ! -z "$default_arrow" ]] ; then
+        selected_arrow=$default_arrow
+    else
+        # 强制使用的分割箭头设置, 设置了则不再支持切换箭头#
+        selected_arrow=$(jq -r '.themes[] | select(.name == "'"$selected_theme"'") |.arrow' $THEME_FILE)
+    fi
+    if [[ "$selected_arrow" == "" || "$selected_arrow" == "null" ]] ; then
+        selected_arrow=$( show_arrows | wofi --dmenu )
+    else
+        echo "force arrow:[$selected_arrow]"
+    fi
     echo "selected_arrow: [$selected_arrow]"
     if [[  -z "$selected_arrow" ]] ; then
         selected_arrow=" "  # 默认三角形

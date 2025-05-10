@@ -7,7 +7,6 @@
     ],
     "layer": "top",
     "position": "top",
-    "height": 20,
     "modules-left": [
         "custom/logo",
         "custom/arrow14",
