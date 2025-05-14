@@ -45,67 +45,28 @@
     "max-length": 40,
 
     "rewrite": {
-        // Desktop
-        "": 
-        "<span foreground='#89b4fa'> </span> Hyprland",
+        "":     " Hyprland",
 
-        // Terminal
+        "(.*)Google Chrome": "󰊯 $1",
+        "(.*) - Google Chrome": "󰊯 $1",
+        "(.*)Mozilla Firefox": "󰈹 $1",
+        "(.*) — Mozilla Firefox": "󰈹 $1",
+
+        "(.*) - Visual Studio Code": "󰨞 $1",
+        "(.*)Visual Studio Code": "󰨞 $1",
+        "nvim": "  Neovim",
+        "nvim (.*)": "  $1",
+        "vim": "  Vim",
+        "vim (.*)": "  $1",
+
         "Terminal - (.*)": " 󰮯- $1",
-
-        "tmux(.*)": 
-        "<span foreground='#a6e3a1'> </span> Tmux",
-
-        // Browser
-
-        "(.*)Google Chrome": 
-        "<span foreground='#f38ba8'> 󰊯 </span> Chrome",
-        "(.*) - Google Chrome": 
-        "<span foreground='#f38ba8'> 󰊯 </span> $1",
-
-        "(.*)Mozilla Firefox": 
-        "<span foreground='#f38ba8'> 󰈹 </span> Firefox",
-        "(.*) — Mozilla Firefox": 
-        "<span foreground='#f38ba8'> 󰈹 </span> $1",
-
-        "(.*)Zen Browser": 
-        "<span foreground='#fab387'> 󰺕 </span> Zen Browser",
-        "(.*) — Zen Browser": 
-        "<span foreground='#fab387'> 󰺕 </span> $1",
-
-        // Development
-
-        "(.*) - Visual Studio Code": 
-        "<span foreground='#89b4fa'> 󰨞 </span> $1",
-        "(.*)Visual Studio Code": 
-        "<span foreground='#89b4fa'> 󰨞 </span> Visual Studio Code",
-
-        "nvim": 
-        "<span foreground='#a6e3a1'>  </span> Neovim",
-        "nvim (.*)": 
-        "<span foreground='#a6e3a1'>  </span> $1",
-
-        "vim": 
-        "<span foreground='#a6e3a1'>  </span> Vim",
-        "vim (.*)": 
-        "<span foreground='#a6e3a1'>  </span> $1",
-
-        // Media
-
-        "(.*)Spotify": 
-        "<span foreground='#a6e3a1'>  </span> Spotify",
-        "(.*)Spotify Premium": 
-        "<span foreground='#a6e3a1'>  </span> Spotify Premium",
-
-        "OBS(.*)": 
-        "<span foreground='#a6adc8'>  </span> OBS Studio",
-
-        "VLC media player": 
-        "<span foreground='#fab387'> 󰕼 </span> VLC Media Player",
-        "(.*) - VLC media player": 
-        "<span foreground='#fab387'> 󰕼 </span> $1",
-
-        "(.*) - mpv": 
-        "<span foreground='#cba6f7'>  </span> $1"
+        "tmux(.*)": "  Tmux",
+        "kitty": "  Kitty",
+        "kitty (.*)": "  $1",
+        "Alacritty": "  Alacritty",
+        "Alacritty (.*)": "  $1",
+        "mpv": "  mpv",
+        "mpv (.*)": "  $1"
     }
     },
 
@@ -261,24 +222,26 @@
         "scroll-step": 1
     },
     "mpris": {
-        "format": "🎵 {player_icon} {dynamic}",
-        "format-paused": "🎵 {status_icon} <i>{dynamic}</i>",
+        "format": "{player} - {status_icon}",
+        "format-paused": "{player} - {status_icon}",
         "player-icons": {
-            "default": "▶",
-            "mpv": "🎵"
+            "default": "▶"
         },
+        "interval": 1,
+        "max-length": 15,
         "status-icons": {
-            "paused": "⏸"
+            "paused": "⏸",
+            "playing": "▶",
+            "stopped": "⏹"
         }
     },
     "mpd": {
-        // "format": "{stateIcon} {consumeIcon}{randomIcon}{repeatIcon}{singleIcon}{artist} - {album} - {title} ({elapsedTime:%M:%S}/{totalTime:%M:%S}) ⸨{songPosition}|{queueLength}⸩ {volume}% ",
         "format": "{stateIcon} {consumeIcon} {title} ({elapsedTime:%M:%S}/{totalTime:%M:%S}) ",
         "format-disconnected": "Disconnected ",
         "format-stopped": "{consumeIcon}Stopped ",
         "unknown-tag": "N/A",
         "interval": 10,
-        "max-length": 20,
+        "max-length": 15,
         "on-click": "playerctl --player=cmus,musicfox,spotify,rhythmbox play-pause",
         "on-scroll-down": "playerctl --player=cmus,musicfox,spotify,rhythmbox next",
         "on-scroll-up": "playerctl --player=cmus,musicfox,spotify,rhythmbox previous",

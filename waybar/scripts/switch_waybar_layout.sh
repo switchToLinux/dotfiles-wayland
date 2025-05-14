@@ -18,11 +18,9 @@ switch_layout() {
     sed -i 's/"position".*$/"position" : '\"${select_layout}\",'/' ${CONFIG_FILE}
 
     if [[ "$select_layout" == "top" || "$select_layout" == "bottom" ]]; then
-        sed -i 's#/left_modules.json#/modules.json#g;s#/left_modules-custom.json#/modules-custom.json#g' ${CONFIG_FILE}
-        sed -i 's#padding:.*;#padding: 0pt 4pt;#g' ${STYLE_FILE}
+        sed -i 's#padding:.*;#padding: 0pt 8pt;#g' ${STYLE_FILE}
         $SCRIPT_DIR/auto_color.sh
     else
-        sed -i 's#/modules.json#/left_modules.json#g;s#/modules-custom.json#/left_modules-custom.json#g' ${CONFIG_FILE}
         sed -i 's#padding: .*;#padding: 4pt 0pt;#g' ${STYLE_FILE}
         $SCRIPT_DIR/auto_color.sh "space space"
     fi

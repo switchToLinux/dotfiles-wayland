@@ -18,7 +18,9 @@
     "modules-center": [
         "custom/arrow5",
         "wlr/taskbar",
-        "custom/arrow13"
+        "custom/arrow13",
+        "mpris",
+        "custom/arrow12"
     ],
     "modules-right": [
         "custom/arrow9",

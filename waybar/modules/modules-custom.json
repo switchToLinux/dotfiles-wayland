@@ -1,34 +1,28 @@
 {
     "custom/power": {
         "format": "⏻",
-        "tooltip": false,
-        "on-click": "~/.config/hypr/scripts/show_power_menu.sh"
-    },
-    "custom/powermenu": {
-        "format": "⏻ ",
-        "tooltip": false,
-        "menu": "on-click",
-        "menu-file": "$HOME/.config/waybar/power_menu.xml",
-        "menu-actions": {
-            "shutdown": "shutdown",
-            "reboot": "reboot",
-            "suspend": "systemctl suspend",
-            "hibernate": "systemctl hibernate"
-        }
+        "tooltip": true,
+        "tooltip-format": "左键:显示电源菜单\n右键: 锁定屏幕\n中键: 注销\n滚动: 休眠",
+        "on-click": "~/.config/hypr/scripts/show_power_menu.sh",
+        "on-click-right": "hyprlock --immediate",
+        "on-click-middle": "hyprctl dispatch exit",
+        "on-scroll-down": "systemctl suspend"
     },
     "custom/logo": {
         "format": "󰍲",
-        "tooltip": false,
-        "on-click": "wofi"
+        "tooltip": true,
+        "tooltip-format": "应用菜单",
+        "on-click": "wofi -W 400 -H 100% --location \"left\" --show drun",
+        "on-click-right": "wofi --show drun"
     },
     "custom/music": {
         "format": " {} ",
         "escape": true,
         "interval": 5,
         "tooltip": true,
+        "tooltip-format": "音乐播放器\n左键:暂停/播放\n右键: 显示音乐菜单\n下滚: 下一首\n上滚: 上一首",
         "exec": "playerctl --player=mpv metadata --format='󰎇 {{ title }} - {{ artist }} {{ album }} ' || echo '  󰎊  ' ",
         "on-click": "playerctl --player=mpv play-pause",
-        "on-click-middle": "playerctl --player=mpv play-pause",
         "on-scroll-down": "playerctl --player=mpv next",
         "on-scroll-up": "playerctl --player=mpv previous",
         "on-click-right": "nohup ~/.config/hypr/userscripts/play_music.sh >/dev/null 2>&1 &",
@@ -48,34 +42,37 @@
         "on-click": "sleep 0.1 && cliphist list | wofi --dmenu -p Copy | cliphist decode | wl-copy",
         "on-click-right": "sleep 0.1 && cliphist list | wofi --dmenu -p 'Delete' | cliphist  delete",
         "on-click-middle": "sleep 0.1 && cliphist wipe && notify-send 'Clipboard cleared' ",
-        "tooltip-format": "Left: Open clipboard Manager\nRight: Delete an entry\nMiddle: Clear list"
+        "tooltip-format": "剪切板\n左键: 查看剪切板\n右键: 删除项\n中键: 清空剪切板"
+
     },
     "custom/system": {
         "format": "",
         "tooltip": false
     },
     "custom/hyprshade": {
-        "format": "󰃠",
-        "format-alt": "󰽧",
-        "tooltip-format": "Toggle Screen Shader",
+        "format": "{}",
+        "tooltip-format": "显示器蓝光护眼模式\n左键: 切换\n右键: 打开hyprshade菜单\n中键: 自动调节",
         "on-click": "hyprshade toggle blue-light-filter-75",
-        "on-click-right": "sleep 0.5; ~/.config/hypr/scripts/hyprshade.sh rofi"
+        "exec": "[[ \"$(hyprshade current)\" == '' ]] && echo -n '󰃠' || echo -n 󰽧 ",
+        "interval": 1,
+        "on-click-middle": "hyprshade on $(hyprshade ls | wofi --dmenu)",
+        "on-click-right": "hyprshade auto"
     },
     "custom/recoder": {
         "format": "{}",
-        "tooltip-format": "Left Click: Start/Stop Recording\nRight Click: Play Last Recording File.\nMiddle Click: Open Recording Folder",
+        "tooltip-format": "左键: 启动/停止录制\n右键: 播放最后一次录制的文件\n上滚: 打开录制文件夹\n下滚: 使用Thunar打开录制文件夹",
         "interval": 3,
-        "exec": "pidof wf-recorder >/dev/null 2>&1 && echo '󰍫 Rec...' || echo '󰃾 '",
-        "on-click-middle": "xdg-open $(cat /tmp/.wf-recorder.outdir)",
-        // "on-click-middle": "thunar $(cat /tmp/.wf-recorder.outdir)",
+        "exec": "~/.config/waybar/scripts/toggle_video_recorder.sh status",
+        "return-type": "json",
+        "on-scroll-up": "xdg-open $(cat /tmp/.wf-recorder.outdir)",
+        "on-scroll-down": "thunar $(cat /tmp/.wf-recorder.outdir)",
         "on-click-right": "mpv $(cat /tmp/.wf-recorder.outfile)",
         "on-click": "~/.config/waybar/scripts/toggle_video_recorder.sh"
     },
     "custom/showmethekey": {
         "format": "󰥻 ",
-        "tooltip-format": "need install showmethekey package.\nMiddle Click: Enable show me the key\nRight Click: Stop show me the key",
-        "on-click": "command -v showmethekey-gtk >/dev/null && notify-send 'middle click to start showmethekey' || notify-send 'You need to install showmethekey package first'",
-        "on-click-middle": "showmethekey-gtk -A -C",
+        "tooltip-format": "showmethekey-gtk\n左键: 打开showmethekey-gtk\n右键: 停止showmethekey-gtk",
+        "on-click": "command -v showmethekey-gtk >/dev/null && showmethekey-gtk -A -C || notify-send 'You need to install showmethekey package first'",
         "on-click-right": "pidof showmethekey-gtk && notify-send 'showmethekey stoped' && pkill -f showmethekey-gtk"
     },
     "custom/expand": {

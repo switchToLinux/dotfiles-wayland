@@ -16,7 +16,7 @@
     box-shadow: none;
     text-shadow: none;
     -gtk-icon-shadow: none;
-    font-size: 12pt;
+    font-size: 14.58pt;
     font-family: "JetBrainsMono Nerd Font Mono";
     font-weight: bold;
 }
@@ -65,5 +65,5 @@
 #custom-hyprshade,
 #custom-nope,
 #custom-expand {
-    padding: 0pt 4pt;
+    padding: 0pt 8pt;
 }

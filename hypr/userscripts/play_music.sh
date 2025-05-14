@@ -9,9 +9,11 @@
 mDIR="$HOME/音乐"
 env_file="$HOME/.music_local.list"
 online_music_file="$HOME/.music_online.list"
+online_iptv_file="$HOME/.iptv_online.list"
 SEP="|"  # title与 url 的分隔符
 
 declare -A online_music
+declare -A online_iptv
 # Online Stations. Edit as required
 declare -A online_music_list=(
   ["FM - Easy Rock 96.3 📻🎶"]="https://radio-stations-philippines.com/easy-rock"
@@ -41,6 +43,11 @@ stop_music() {
 start_play_music() {
   stop_music
   mpv --shuffle --loop-playlist --vid=no "$@"
+}
+
+start_play_video() {
+  stop_music
+  mpv --loop-playlist "$@"
 }
 
 get_music_dir() {
@@ -158,10 +165,43 @@ play_online_music() {
   start_play_music "$link"
 }
 
+# Main function for playing online iptv
+play_online_iptv() {
+  if [[ -f "$online_iptv_file" ]] ; then
+    # 读取文件并恢复数组
+    while IFS="${SEP}" read -r key value; do
+      [[ "$key" =~ ^#.*$ ]] && continue # 跳过注释行
+      [[ "$key" =~ ^\s*$ ]] && continue # 跳过空行
+      [[ -z "$key" || -z "$value" ]] && continue
+
+      online_iptv["$key"]="$value"
+    done <  $online_iptv_file
+  fi
+
+  choice=$(for online in "${!online_iptv[@]}"; do  echo "$online" ; done | wofi --dmenu --sort-order alphabetical -p "add playlist: title|link ")
+  if [ -z "$choice" ]; then
+    exit 1
+  fi
+  link=${online_iptv["$choice"]}
+  if [[ -z "$link" ]] ; then # 可能添加新链接
+    IFS="$SEP"  read -r key value  <<< "$choice"
+    if [[ ! -z "$key" && ! -z "$value" && "$value" =~ ^https: ]] ; then
+      echo "$key${SEP}${value}"  >> $online_iptv_file
+      choice="$key"
+      link="$value"
+    fi
+  fi
+  echo "choice:$choice"
+  echo "link=$link"
+  notification "$choice"
+  start_play_video "$link"
+}
+
 show_menu() {
   echo "1 播放在线音乐(Online Music)"
   echo "2 播放本地音乐(Local Music)"
   echo "3 随机本地音乐(Shuffle Local Music)"
+  echo "4 播放直播IPtv(Online IPtv)"
 }
 
 user_choice=$(show_menu| wofi --dmenu | cut -d" " -f1)
@@ -177,6 +217,9 @@ case "$user_choice" in
     ;;
   "3")
     shuffle_local_music
+    ;;
+  "4")
+    play_online_iptv
     ;;
   *)
     ;;
