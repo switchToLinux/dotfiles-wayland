@@ -16,17 +16,31 @@
         "on-click-right": "wofi --show drun"
     },
     "custom/music": {
-        "format": " {} ",
-        "escape": true,
-        "interval": 5,
+        "format": "  ",
+        // "interval": 5,
+        // "exec": "playerctl --player=mpv metadata --format='󰎇 {{ title }}' || echo '  󰎊  ' ",
         "tooltip": true,
         "tooltip-format": "音乐播放器\n左键:暂停/播放\n右键: 显示音乐菜单\n下滚: 下一首\n上滚: 上一首",
-        "exec": "playerctl --player=mpv metadata --format='󰎇 {{ title }} - {{ artist }} {{ album }} ' || echo '  󰎊  ' ",
         "on-click": "playerctl --player=mpv play-pause",
         "on-scroll-down": "playerctl --player=mpv next",
         "on-scroll-up": "playerctl --player=mpv previous",
         "on-click-right": "nohup ~/.config/hypr/userscripts/play_music.sh >/dev/null 2>&1 &",
-        "max-length": 30
+        "max-length": 15
+    },
+    "cffi/lyrics": {
+        "module_path": "/apps/libs/libwaylyrics.so",
+        "id": "waylyrics",
+        "interval": 1,
+        "actions": {
+            "on-click": "toggle",
+            "on-click-right": "loop",
+            "on-click-middle": "shuffle",
+            "on-scroll-up": "prev",
+            "on-scroll-down": "next"
+        },
+        "tooltip": true,
+        "tooltip-format": "mpris歌词显示\n左键: 暂停/播放\n右键: 暂停/播放\n中键: 停止\n下滚: 下一首\n上滚: 上一首",
+        "dest": "mpris"
     },
     "custom/wifi": {
         "exec": "~/.config/waybar/userscripts/wifi-status.sh",
@@ -51,7 +65,7 @@
     },
     "custom/hyprshade": {
         "format": "{}",
-        "tooltip-format": "显示器蓝光护眼模式\n左键: 切换\n右键: 打开hyprshade菜单\n中键: 自动调节",
+        "tooltip-format": "显示器蓝光护眼模式\n左键: 切换\n中键: 打开hyprshade菜单\n右键: 自动调节",
         "on-click": "hyprshade toggle blue-light-filter-75",
         "exec": "[[ \"$(hyprshade current)\" == '' ]] && echo -n '󰃠' || echo -n 󰽧 ",
         "interval": 1,

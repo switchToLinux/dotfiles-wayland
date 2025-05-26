@@ -12,15 +12,11 @@
         "custom/arrow14",
         "hyprland/workspaces",
         "custom/arrow10",
-        "hyprland/window",
+        "wlr/taskbar",
         "custom/arrow11"
     ],
     "modules-center": [
-        "custom/arrow5",
-        "wlr/taskbar",
-        "custom/arrow13",
-        "mpris",
-        "custom/arrow12"
+        "cffi/lyrics"
     ],
     "modules-right": [
         "custom/arrow9",

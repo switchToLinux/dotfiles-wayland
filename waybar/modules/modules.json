@@ -79,7 +79,7 @@
     },
     "pulseaudio": {
         "format": "{icon} {volume}%",
-        "format-muted": "  muted",
+        "format-muted": "  {volume}%",
         "format-icons": {
             "headphone": "",
             "default": [
@@ -88,7 +88,8 @@
                 " "
             ]
         },
-        "on-click": "pavucontrol"
+        "on-click": "pavucontrol",
+        "on-click-right": "pamixer -t"
     },
     "pulseaudio/slider": {
         "min": 0,
@@ -222,8 +223,8 @@
         "scroll-step": 1
     },
     "mpris": {
-        "format": "{player} - {status_icon}",
-        "format-paused": "{player} - {status_icon}",
+        "format": "{player} {status_icon}",
+        "format-paused": "{player} {status_icon}",
         "player-icons": {
             "default": "▶"
         },
