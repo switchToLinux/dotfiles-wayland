@@ -81,9 +81,9 @@ function menu_tail() { [[ "$item_index" != "0" ]] && echo "|" ; print_feed; item
 
 # 日志记录
 function output_msg() { LEVEL="$1" ; shift ; echo -e "$(date +'%Y年%m月%d日%H:%M:%S'):${LEVEL}: $@" ; }
-function loginfo() { output_msg "${TC}INFO${NC}" $@  ; }
+function loginfo() { output_msg "${BG}INFO${NC}" $@  ; }
 function logerr()  { output_msg "${BRB}ERROR${NC}" $@ ; }
-function LOG() { output_msg "${TC}INFO${NC}" $@  ; }
+function LOG() { output_msg "${BG}INFO${NC}" $@  ; }
 function ERR()  { output_msg "${BRB}ERROR${NC}" $@ ; }
 
 #### 检测当前终端支持色彩
@@ -243,7 +243,7 @@ install_hyprland() {
 }
 
 config_hyprland() {
-  prompt "config hyprland"
+  prompt "config hyprland" || return 0
   dest_dir="~/.config/dotfiles-wayland"
   [[ -d "${dest_dir}" ]] && read -p "dest_dir ${dest_dir} already exists, do you want to continue? (y/n) " choice && [[ ! "${choice}" =~ ^[Yy]$ ]] && return 0
   [[ -d "${dest_dir}" ]] && rm -rf ${dest_dir}
@@ -258,12 +258,13 @@ config_hyprland() {
 }
 
 auto_install() {
+  prompt "ready to auto install and config hyprland?" || return 0
   install_hyprland "yes"
   config_hyprland
 }
 
 config_sddm() {
-  prompt "config sddm"
+  prompt "config sddm" || return 0
   sudo git clone -b master --depth 1 https://github.com/keyitdev/sddm-astronaut-theme.git /usr/share/sddm/themes/sddm-astronaut-theme
   [[ "$?" -ne "0" ]] && ERR "git clone sddm-astronaut-theme failed" && return 1
 
@@ -278,7 +279,7 @@ config_sddm() {
 }
 
 config_grub() {
-  prompt "config grub"
+  prompt "config grub" || return 0
   grub_url="https://github.com/vinceliuice/grub2-themes"
   dest_dir="/tmp/grub2-themes"
   [[ -d "${dest_dir}" ]] && read -p "dest_dir ${dest_dir} already exists, do you want to continue? (y/n) " choice && [[ ! "${choice}" =~ ^[Yy]$ ]] && return 0
@@ -291,7 +292,7 @@ config_grub() {
 }
 
 config_gtk() {
-  prompt "config gtk-theme"
+  prompt "config gtk-theme" || return 0
   dest_dir="/tmp/gtk-themes"
   [[ -d "${dest_dir}" ]] && read -p "dest_dir ${dest_dir} already exists, do you want to continue? (y/n) " choice && [[ ! "${choice}" =~ ^[Yy]$ ]] && return 0
   [[ -d "${dest_dir}" ]] && rm -rf ${dest_dir}
@@ -386,7 +387,6 @@ install_video_driver() {
 }
 
 function download_nvidia_driver() {
-    loginfo "Start to download_nvidia_driver"
     prompt "ready to download nvidia driver" || return 1
     command -v jq >/dev/null || sudo $pac_cmd_ins jq
     ! command -v jq >/dev/null && logerr "please install jq command first!" && return 1
@@ -417,6 +417,7 @@ function download_nvidia_driver() {
             --compressed
         [[ "$?" != "0" ]] && logerr "failed to get nvidia driver package list!" && return 1
     fi
+
     file_url=`cat $tmp_json |jq |awk '/DownloadURL/{ print $2 }' | sed -n 's/[",]//g; 1p'`
     file_size=`cat $tmp_json |jq |awk '/DownloadURL/{ print $2 }' | sed -n 's/[",]//g; 2p'`
     loginfo "download url: $file_url , file size: $file_size MB"
@@ -427,15 +428,14 @@ function download_nvidia_driver() {
     fi
     prompt "Download nvidia driver package(file size: $file_size )" && ! ${CURL} -o $tmp_file -SL $file_url && logerr "Download nvidia driver failed!" && return 2
 
-    loginfo "nvidia driver: $tmp_file ."
+    loginfo "install nvidia driver: $tmp_file ."
     sh ${tmp_file}
-    loginfo "finish download_nvidia_driver."
+    loginfo "finish install nvidia driver."
 }
 
 
 install_paru() {
-  LOG "install paru"
-  LOG "install paru"
+  prompt "install paru" || return 0
   paru_url="https://aur.archlinux.org/paru.git"
   paru_dir="/tmp/paru"
   [[ -d "${paru_dir}" ]] && rm -rf ${paru_dir}
@@ -450,7 +450,7 @@ install_paru() {
 }
 
 install_yay() {
-  LOG "install yay"
+  prompt "install yay" || return 0
   aur_url="https://aur.archlinux.org/yay.git"
   aur_dir="/tmp/yay"
   [[ -d "${aur_dir}" ]] && rm -rf ${aur_dir}
@@ -464,25 +464,25 @@ install_yay() {
   notify "Install aur success"
 }
 
+show_aur_menu() {
+  menu_head "install AUR package manager"
+  menu_item 1 install yay
+  menu_item 2 install paru
+  menu_tail
+}
 install_aur() {
   LOG "install aur"
-  # 选择 install_paru 或者 install_yay
   pkg_cmd=$(get_pack_cmd)
-  choice=$({
-    echo "1. install_paru"
-    echo "2. install_yay"
-  } | ${MENU_CMD} | awk -F'.' '{printf $1}')
-  case "${choice}" in
-  1)
-    install_paru
-    ;;
-  2)
-    install_yay
-    ;;
-  *)
-    echo "Invalid choice. Please try again."
-    ;;
-  esac
+  while true ; do
+    show_aur_menu
+    read -r -n 1 -e  -p "`echo_greenr choice:`${PMT} " choice
+    case "${choice}" in
+      1) install_yay      ;;
+      2) install_paru     ;;
+      q|"") return 0      ;;
+      *) echo "Invalid choice." ;;
+    esac
+  done
   [[ "$?" -ne "0" ]] && ERR "Install aur failed" && return 1
   LOG "Install aur success"
   notify "Install aur success"
@@ -490,7 +490,7 @@ install_aur() {
 
 install_fonts() {
   # Download JetBrainsMonoNerdFonts
-  LOG "install fonts"
+  prompt "install fonts" || return 0
   fonts_url="https://github.com/ryanoasis/nerd-fonts/releases/download/v3.4.0/JetBrainsMono.tar.xz"
   download_folder="/tmp/JetBrainsMono"
   [[ ! -d "${download_folder}" ]] && mkdir ${download_folder}
@@ -518,11 +518,11 @@ enable_dm() {
 
 show_menu_main() {
   menu_head "Main menu"
-  menu_item 0 quick install hyprland
+  menu_item 0 auto install hyprland
   menu_item 1 install hyprland
   menu_item 2 config hyprland
   menu_item a install aur
-  menu_item d install video driver
+  menu_item d install nvidia driver
   menu_item f install fonts
   menu_item s enable sddm
   menu_item t theme config
@@ -538,11 +538,11 @@ do_main_menu() {
     show_menu_main
     read -r -n 1 -e  -p "`echo_greenr choice:`${PMT} " choice
     case "${choice}" in
+      0) auto_install ;;
       1) install_hyprland ;;
       2) config_hyprland ;;
       3) config_sddm ;;
       4) config_grub ;;
-      0) auto_install ;;
       a) install_aur ;;
       d) download_nvidia_driver ;;
       f) install_fonts ;;
