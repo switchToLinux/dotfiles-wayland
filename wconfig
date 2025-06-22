@@ -16,7 +16,6 @@ MENU_CMD="fzf"
 need_confirm="yes"
 pkg_cmd=""
 pkg_update_cmd=""
-ERR_FILE="/tmp/wconfig.err.log"
 
 git_url="https://github.com/switchToLinux/dotfiles"
 
@@ -42,7 +41,6 @@ ERR() {
   notify "Error" "$@" "critical"
 }
 
-LOG "Start wconfig , log file: ${ERR_FILE}"
 
 # 检查依赖软件是否安装
 check_depends() {
@@ -64,7 +62,7 @@ check_depends() {
 declare -A package_set=(
   ["display_manager"]="sddm qt6-svg qt6-virtualkeyboard qt6-multimedia-ffmpeg"
   ["compositor"]="hyprland hyprutils hyprlock hyprcursor hyprpaper hypridle xdg-desktop-portal xdg-desktop-portal-hyprland"
-  ["bar"]="waybar"
+  ["status_bar"]="waybar"
   ["launcher_menu"]="wofi"
   ["notification"]="mako dunst"
   ["file_manager"]="thunar yazi ueberzugpp" # 支持terminal图片预览
@@ -172,7 +170,7 @@ config_hyprland() {
   [[ -d "${dest_dir}" ]] && read -p "dest_dir ${dest_dir} already exists, do you want to continue? (y/n) " choice && [[ ! "${choice}" =~ ^[Yy]$ ]] && return 0
   [[ -d "${dest_dir}" ]] && rm -rf ${dest_dir}
 
-  git clone ${git_url} ${dest_dir} >>${ERR_FILE} 2>&1
+  git clone ${git_url} ${dest_dir}
   [[ "$?" -ne "0" ]] && ERR "git clone ${git_url} failed" && return 1
   cd ${dest_dir}
   [[ "$?" -ne "0" ]] && ERR "cd ${dest_dir} failed" && return 1
@@ -202,7 +200,7 @@ config_grub() {
   dest_dir="/tmp/grub2-themes"
   [[ -d "${dest_dir}" ]] && read -p "dest_dir ${dest_dir} already exists, do you want to continue? (y/n) " choice && [[ ! "${choice}" =~ ^[Yy]$ ]] && return 0
   [[ -d "${dest_dir}" ]] && rm -rf ${dest_dir}
-  git clone --depth=1 ${grub_url} ${dest_dir} >>${ERR_FILE} 2>&1
+  git clone --depth=1 ${grub_url} ${dest_dir}
   [[ "$?" -ne "0" ]] && ERR "git clone ${grub_url} failed" && return 1
   cd ${dest_dir}
   [[ "$?" -ne "0" ]] && ERR "cd ${dest_dir} failed" && return 1
@@ -215,7 +213,7 @@ config_gtk() {
   dest_dir="/tmp/gtk-themes"
   [[ -d "${dest_dir}" ]] && read -p "dest_dir ${dest_dir} already exists, do you want to continue? (y/n) " choice && [[ ! "${choice}" =~ ^[Yy]$ ]] && return 0
   [[ -d "${dest_dir}" ]] && rm -rf ${dest_dir}
-  git clone https://github.com/vinceliuice/WhiteSur-gtk-theme.git --depth=1 ${dest_dir} >>${ERR_FILE} 2>&1
+  git clone https://github.com/vinceliuice/WhiteSur-gtk-theme.git --depth=1 ${dest_dir}
   [[ "$?" -ne "0" ]] && ERR "git clone https://github.com/vinceliuice/WhiteSur-gtk-theme.git failed" && return 1
   cd ${dest_dir}
   [[ "$?" -ne "0" ]] && ERR "cd ${dest_dir} failed" && return 1
@@ -225,7 +223,7 @@ config_gtk() {
   dest_dir="/tmp/gtk-icon-themes"
   [[ -d "${dest_dir}" ]] && read -p "dest_dir ${dest_dir} already exists, do you want to continue? (y/n) " choice && [[ ! "${choice}" =~ ^[Yy]$ ]] && return 0
   [[ -d "${dest_dir}" ]] && rm -rf ${dest_dir}
-  git clone https://github.com/vinceliuice/WhiteSur-icon-theme.git --depth=1 ${dest_dir} >>${ERR_FILE} 2>&1
+  git clone https://github.com/vinceliuice/WhiteSur-icon-theme.git --depth=1 ${dest_dir}
   [[ "$?" -ne "0" ]] && ERR "git clone https://github.com/vinceliuice/WhiteSur-icon-theme.git failed" && return 1
   cd ${dest_dir}
   [[ "$?" -ne "0" ]] && ERR "cd ${dest_dir} failed" && return 1
@@ -236,7 +234,7 @@ config_gtk() {
   dest_dir="/tmp/cursor-themes"
   [[ -d "${dest_dir}" ]] && read -p "dest_dir ${dest_dir} already exists, do you want to continue? (y/n) " choice && [[ ! "${choice}" =~ ^[Yy]$ ]] && return 0
   [[ -d "${dest_dir}" ]] && rm -rf ${dest_dir}
-  git clone https://github.com/guillaumeboehm/Nordzy-cursors.git --depth=1 ${dest_dir} >>${ERR_FILE} 2>&1
+  git clone https://github.com/guillaumeboehm/Nordzy-cursors.git --depth=1 ${dest_dir}
   [[ "$?" -ne "0" ]] && ERR "git clone https://github.com/guillaumeboehm/Nordzy-cursors.git failed" && return 1
   cd ${dest_dir}
   [[ "$?" -ne "0" ]] && ERR "cd ${dest_dir} failed" && return 1
@@ -268,7 +266,7 @@ config_wallpaper() {
   wallpaper_dir="$HOME/wallpapers"
   wall_url=https://github.com/D3Ext/aesthetic-wallpapers
   [[ -d "${wallpaper_dir}" ]] && return 0
-  git clone --depth=1 ${wall_url} ${wallpaper_dir} >>${ERR_FILE} 2>&1
+  git clone --depth=1 ${wall_url} ${wallpaper_dir}
   [[ "$?" -ne "0" ]] && ERR "git clone ${wall_url} failed" && return 1
   LOG "config wallpaper success"
   notify "config wallpaper success"
@@ -281,7 +279,7 @@ install_video_driver() {
   # 检查是否安装了 nvidia 显卡设备
   if lspci | grep -i nvidia | grep -i vga; then
     LOG "Detected NVIDIA GPU, installing drivers..."
-    ${pkg_cmd} ${nvidia_driver} >>${ERR_FILE} 2>&1
+    ${pkg_cmd} ${nvidia_driver}
     [[ "$?" -ne "0" ]] && ERR "Install nvidia driver failed" && return 1
 
     # 配置 nvidia 到 grub
@@ -303,7 +301,7 @@ install_paru() {
   paru_url="https://aur.archlinux.org/paru.git"
   paru_dir="/tmp/paru"
   [[ -d "${paru_dir}" ]] && rm -rf ${paru_dir}
-  git clone --depth=1 ${paru_url} ${paru_dir} >>${ERR_FILE} 2>&1
+  git clone --depth=1 ${paru_url} ${paru_dir}
   [[ "$?" -ne "0" ]] && ERR "git clone ${paru_url} failed" && return 1
   cd ${paru_dir}
   [[ "$?" -ne "0" ]] && ERR "cd ${paru_dir} failed" && return 1
@@ -318,7 +316,7 @@ install_yay() {
   aur_url="https://aur.archlinux.org/yay.git"
   aur_dir="/tmp/yay"
   [[ -d "${aur_dir}" ]] && rm -rf ${aur_dir}
-  git clone --depth=1 ${aur_url} ${aur_dir} >>${ERR_FILE} 2>&1
+  git clone --depth=1 ${aur_url} ${aur_dir}
   [[ "$?" -ne "0" ]] && ERR "git clone ${aur_url} failed" && return 1
   cd ${aur_dir}
   [[ "$?" -ne "0" ]] && ERR "cd ${aur_dir} failed" && return 1
@@ -404,19 +402,19 @@ do_main_menu() {
   local choice
   choice=$(show_main_menu)
   case "${choice}" in
-  1) install_hyprland ;;
-  2) config_hyprland ;;
-  3) config_sddm ;;
-  4) config_grub ;;
-  0) auto_install ;;
-  d) install_video_driver ;;
-  f) install_fonts ;;
-  s) enable_dm ;;
-  t) theme_config ;;
-  q | "") return 0 ;;
-  w) config_wallpaper ;;
-  a) install_aur ;;
-  *) echo "Invalid choice. Please try again." ;;
+    1) install_hyprland ;;
+    2) config_hyprland ;;
+    3) config_sddm ;;
+    4) config_grub ;;
+    0) auto_install ;;
+    d) install_video_driver ;;
+    f) install_fonts ;;
+    s) enable_dm ;;
+    t) theme_config ;;
+    q | "") return 0 ;;
+    w) config_wallpaper ;;
+    a) install_aur ;;
+    *) echo "Invalid choice. Please try again." ;;
   esac
 }
 

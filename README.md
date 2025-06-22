@@ -27,26 +27,11 @@
 |  password manager |  keepassxc |  密码管理器程序   |
 
 
-## TODO
-- [x] 基础Hyprland配置，包括快捷键、窗口管理、屏幕布局等。
-- [x] SDDM主题配置.
-- [x] hyprcursor主题配置.
-- [x] mako通知配置.
-- [x]  hyprlock锁屏配置.
-- [x]  wofi菜单配置.
-- [x]  cliphist剪切板历史记录配置.   
-- [x]  waybar状态栏基础配置.
-- [x] waybar多种主题实现切换选择: 主题/样式/布局切换，并且支持自动切换颜色搭配。
-- [ ] 支持更丰富的waybar主题:
+## 常见问题及说明文档
+
+wayland框架协议的问题还是有很多的，所以这里列出一些常见的问题和解决办法。
 
 
-## SDDM主题
-
-[sugar-candy](https://github.com/ToppDev/sddm-sugar-candy)
-
-
-## hyprcursor主题
-
-- 配置hyprcursor主题[文档](https://wiki.hyprland.org/Hypr-Ecosystem/hyprcursor/)。
-- [hyprcursor](https://standards.hyprland.org/hyprcursor/) 主题标准参考文档。
+- 查看TODO及功能文档，请点击阅读[TODO文档](docs/TODO.md)。
+- 遇到问题，请先查看[FAQ文档](docs/FAQ.md)。
 

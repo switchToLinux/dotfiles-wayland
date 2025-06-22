@@ -72,7 +72,7 @@
             "transition-left-to-right": true
         },
         "modules": [
-            "custom/tools",
+            "custom/tips1",
             "wlr/taskbar"
         ]
     },

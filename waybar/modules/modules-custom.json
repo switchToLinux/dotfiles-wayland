@@ -9,7 +9,7 @@
         "on-scroll-down": "systemctl suspend"
     },
     "custom/logo": {
-        "format": "󰍲",
+        "format": "",
         "tooltip": true,
         "tooltip-format": "应用菜单",
         "on-click": "wofi -W 400 -H 100% --location \"left\" --show drun",
@@ -88,7 +88,7 @@
         "on-click": "~/.config/waybar/scripts/toggle_video_recorder.sh"
     },
     "custom/showmethekey": {
-        "format": "󰥻 ",
+        "format": " 󰥻 ",
         "tooltip-format": "showmethekey-gtk\n左键: 打开showmethekey-gtk\n右键: 停止showmethekey-gtk",
         "on-click": "command -v showmethekey-gtk >/dev/null && showmethekey-gtk -A -C || notify-send 'You need to install showmethekey package first'",
         "on-click-right": "pidof showmethekey-gtk && notify-send 'showmethekey stoped' && pkill -f showmethekey-gtk"
@@ -105,8 +105,20 @@
         "format": "󰽰",
         "tooltip": false
     },
+    "custom/tips1": {
+        "format": "󰿨",
+        "tooltip": false
+    },
+    "custom/tips2": {
+        "format": "󱇙",
+        "tooltip": false
+    },
+    "custom/tips3": {
+        "format": "󱇬",
+        "tooltip": false
+    },
     "custom/drawer": {
-        "format": "󰶢",
+        "format": "󰮯",
         "tooltip": false
     },
     "custom/sep": {
