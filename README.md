@@ -2,6 +2,18 @@
 
 这里配置了 wayland 的一些东西， 方便快速切换为 wayland 桌面环境。
 
+<details open>
+<summary>安装Hyprland</summary>
+    使用 curl 命令快速下载 wconfig 命令:
+
+    curl -o wconfig -L pushx.link/s/wconfig
+    chmod +x wconfig && sudo mv wconfig /usr/local/bin/
+    
+    wconfig
+
+</details>
+
+
 ## wayland 环境配置
 
 | 模块 | 方案 |  备注   |

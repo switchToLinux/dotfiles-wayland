@@ -13,11 +13,115 @@
 # 菜单显示命令： 可选 fzf / wofi
 # MENU_CMD="wofi --dmenu --width 400 --height 400"
 MENU_CMD="fzf"
-need_confirm="yes"
 pkg_cmd=""
 pkg_update_cmd=""
+CURL="curl -C - "
 
-git_url="https://github.com/switchToLinux/dotfiles"
+git_url="https://github.com/switchToLinux/dotfiles-wayland"
+
+
+####################### PROMPT FUNCTION #######################
+
+#### 默认选项 #####
+default_confirm="no"    # 是否显示提示确认，no-(默认)提示，yes-自动选择yes
+PMT=">>>"
+READ_TIMEOUT=30   # read timeout seconds
+
+# Define Colors
+RED='\e[41m'
+BRB='\e[1;7;31;47m' # Blink Red bold
+NC='\e[0m' # No color
+BG='\e[7m' # Highlighting Background color
+TC='\e[1m' # Highlighting Text color
+
+function echo_greenr() { printf "\033[0;32;7m$@\033[0m"   ; }
+function redr_line()   { printf "\033[0;31;7m$@\033[0m\n" ; }
+
+item_index=0        # 记录菜单选项序号
+item_line_count=3   # 每行显示菜单数量
+ILEN=30             # 单个选项长度
+MLEN=$(( (${ILEN}+1) * ${item_line_count}))   # 单行最大长度
+
+function print_feed() {
+    for i in $(seq 1 $item_line_count) ; do
+        printf "+%${ILEN}s" | tr ' ' '-'
+    done
+    printf "+\n"
+}
+
+function menu_line() { echo -en "|  ${BRB} $@ $NC" ; tput hpa $MLEN ; echo "|" ; }
+
+# 居中显示菜单选项
+# 函数： center_line text max_len
+function center_line() {
+  local text="$1"
+  local width="${2:-$MLEN}"  # 默认使用终端宽度
+
+  local plain_text
+  plain_text=$(echo -n "$text" | sed 's/\x1B\[[0-9;]*[JKmsu]//g')
+  local text_len=${#plain_text}
+
+  # 计算左右填充空格
+  local total_padding=$((width - text_len))
+  local left_padding=$((total_padding / 2))
+  local right_padding=$((total_padding - left_padding))
+
+  # 构建输出：| + 左空格 + 文本 + 右空格 + |
+  printf "| %*s${BRB}%s${NC}" "$left_padding" "" "$text" ; tput hpa $width ; printf "|\n"
+}
+
+function menu_head() { print_feed;   center_line "$@" ; print_feed; }
+# 一行可以有 item_line_count 个菜单选项
+function menu_item() { let item_index=$item_index+1 ; n=$1 ; shift ; let rlen="$item_index * ($ILEN + 1)" ; echo -en "|  $BG ${n} $NC $@" ; tput hpa $rlen ; [[ "$item_index" == "$item_line_count" ]] && echo "|" && item_index=0 ; }
+# 输出单行长菜单选项,长度有限制
+function menu_iteml() { n=$1 ; shift ; echo -en "|  $BG ${n} $NC $@" ; tput hpa $MLEN ; echo "|" ; }
+# 用于输入长信息(非菜单选项),不限制结尾长度
+function menu_info() { n=$1 ; shift ; echo -e "|  $BG ${n} $NC $@" ; }
+function menu_tail() { [[ "$item_index" != "0" ]] && echo "|" ; print_feed; item_index=0 ; }
+
+# 日志记录
+function output_msg() { LEVEL="$1" ; shift ; echo -e "$(date +'%Y年%m月%d日%H:%M:%S'):${LEVEL}: $@" ; }
+function loginfo() { output_msg "${TC}INFO${NC}" $@  ; }
+function logerr()  { output_msg "${BRB}ERROR${NC}" $@ ; }
+function LOG() { output_msg "${TC}INFO${NC}" $@  ; }
+function ERR()  { output_msg "${BRB}ERROR${NC}" $@ ; }
+
+#### 检测当前终端支持色彩
+function check_term() {
+	# 指定 TERM ，避免对齐问题(已知某些rxvt-unicode终端版本存在对齐问题)
+    if [[ "`tput colors`" -lt "256" ]] ; then
+        export TERM=xterm
+        export COLORTERM=truecolor
+    fi
+}
+
+# 基础依赖命令检测与运行环境 #
+function check_basic() {
+    command -v curl &>/dev/null || sudo $pac_cmd_ins curl
+    command -v git  &>/dev/null || sudo $pac_cmd_ins git
+    command -v fzf  &>/dev/null || sudo $pac_cmd_ins fzf
+
+    # 运行环境检测 #
+    [[ "$(id -u)" -eq 0 ]] && echo "Please run this script by none root user!" && exit 1
+    ! grep -q "ID=arch" /etc/os-release && echo "Sorry! This script only support Arch Linux!" && exit 1
+
+    check_term
+}
+
+
+################################################################
+# 提示确认函数，如果使用 -y 参数默认为Y确认
+function prompt() {
+    msg="$@"
+    if [ "$default_confirm" != "yes" ] ; then
+        read -t $READ_TIMEOUT -r -n 1 -e  -p "$msg (y/`echo_greenr N`)" str_answer
+        case "$str_answer" in
+            y*|Y*)  echo "Confirmed" ; return 0 ;;
+            *)      echo "Canceled" ; return 1 ;;
+        esac
+    fi
+    return 0
+}
 
 notify() {
   local title="${1}"
@@ -30,30 +134,6 @@ notify() {
   else
     echo "${title}: ${message}"
   fi
-}
-
-LOG() {
-  printf "\033[0;32m INFO: %s - %s \033[0m\n" "$(date +'%Y-%m-%d %H:%M:%S')" "$@"
-}
-
-ERR() {
-  printf "\033[0;31;7m ERROR: %s - %s \033[0m\n" "$(date +'%Y-%m-%d %H:%M:%S')" "$@"
-  notify "Error" "$@" "critical"
-}
-
-
-# 检查依赖软件是否安装
-check_depends() {
-  local depends=(
-    "fzf"
-    "git"
-  )
-  for depend in "${depends[@]}"; do
-    if ! command -v "${depend}" &>/dev/null; then
-      notify "Error: ${depend} is not installed. Please install it first."
-      exit 1
-    fi
-  done
 }
 
 # 安装软件集合 ， 可以个根据不同发行版选择不同的变量
@@ -88,7 +168,7 @@ declare -A package_set=(
 get_pack_cmd() {
   local pack_cmd=$(command -v apt || command -v yay || command -v paru || command -v pacman || command -v yum || command -v dnf || command -v zypper)
   cmd_name="$(basename ${pack_cmd})"
-  if [[ "${need_confirm}" != "yes" ]]; then
+  if [[ "${default_confirm}" == "yes" ]]; then
     # 增加不需要确认参数
     case "${cmd_name}" in
     apt)
@@ -144,7 +224,10 @@ get_pack_cmd() {
 }
 
 install_hyprland() {
-  need_confirm=${1:-"yes"}
+  default_confirm=${1:-"no"}
+
+  prompt "start install hyprland" || return 0
+
   # 获取软件包安装命令
   pkg_cmd=$(get_pack_cmd)
   # 更新软件包列表
@@ -154,18 +237,13 @@ install_hyprland() {
   for pack_name in "${!package_set[@]}"; do
     LOG "DEBUG: installing module_name: [${pack_name}] ,packages: ${package_set[${pack_name}]}"
     ${pkg_cmd} ${package_set[${pack_name}]}
-    # 安装错误退出
     [[ "$?" -ne "0" ]] && ERR "Install ${pack_name} failed" && return 1
     LOG "Install ${pack_name} success"
   done
 }
 
-auto_install() {
-  install_hyprland "no"
-  config_hyprland
-}
-
 config_hyprland() {
+  prompt "config hyprland"
   dest_dir="~/.config/dotfiles-wayland"
   [[ -d "${dest_dir}" ]] && read -p "dest_dir ${dest_dir} already exists, do you want to continue? (y/n) " choice && [[ ! "${choice}" =~ ^[Yy]$ ]] && return 0
   [[ -d "${dest_dir}" ]] && rm -rf ${dest_dir}
@@ -179,8 +257,13 @@ config_hyprland() {
   [[ "$?" -ne "0" ]] && ERR "config failed" && return 1
 }
 
+auto_install() {
+  install_hyprland "yes"
+  config_hyprland
+}
+
 config_sddm() {
-  LOG "config sddm"
+  prompt "config sddm"
   sudo git clone -b master --depth 1 https://github.com/keyitdev/sddm-astronaut-theme.git /usr/share/sddm/themes/sddm-astronaut-theme
   [[ "$?" -ne "0" ]] && ERR "git clone sddm-astronaut-theme failed" && return 1
 
@@ -195,7 +278,7 @@ config_sddm() {
 }
 
 config_grub() {
-  LOG "config grub"
+  prompt "config grub"
   grub_url="https://github.com/vinceliuice/grub2-themes"
   dest_dir="/tmp/grub2-themes"
   [[ -d "${dest_dir}" ]] && read -p "dest_dir ${dest_dir} already exists, do you want to continue? (y/n) " choice && [[ ! "${choice}" =~ ^[Yy]$ ]] && return 0
@@ -204,12 +287,11 @@ config_grub() {
   [[ "$?" -ne "0" ]] && ERR "git clone ${grub_url} failed" && return 1
   cd ${dest_dir}
   [[ "$?" -ne "0" ]] && ERR "cd ${dest_dir} failed" && return 1
-  #sudo ./install.sh -t whitesur -c 1366x768
   sudo ./install.sh -t whitesur
 }
 
 config_gtk() {
-  LOG "config gtk-theme"
+  prompt "config gtk-theme"
   dest_dir="/tmp/gtk-themes"
   [[ -d "${dest_dir}" ]] && read -p "dest_dir ${dest_dir} already exists, do you want to continue? (y/n) " choice && [[ ! "${choice}" =~ ^[Yy]$ ]] && return 0
   [[ -d "${dest_dir}" ]] && rm -rf ${dest_dir}
@@ -246,20 +328,26 @@ config_gtk() {
 }
 
 show_theme_menu() {
-  echo "1. config hyprland theme"
-  echo "2. config waybar theme"
-  echo "3. config gtk theme(gtk-icon-theme, icon-theme, cursor-theme)"
+  menu_head "config hyprland"
+  menu_item 1 config hyprland theme
+  menu_item 2 config waybar theme
+  menu_item 3 config gtk theme
+  menu_tail
 }
 
 theme_config() {
   LOG "theme config"
-  choice=$(show_theme_menu | ${MENU_CMD} | awk -F'.' '{printf $1}')
-  case "${choice}" in
-  1) config_hyprland ;;
-  2) config_waybar ;;
-  3) config_gtk ;;
-  *) echo "Invalid choice. Please try again." ;;
-  esac
+  while true ; do
+    show_theme_menu
+    read -r -n 1 -e  -p "`echo_greenr choice:`${PMT} " choice
+    case "${choice}" in
+      1) config_hyprland ;;
+      2) config_waybar ;;
+      3) config_gtk ;;
+      q|"") return 0 ;;
+      *) echo "Invalid choice[$choice]" ;;
+    esac
+  done
 }
 
 config_wallpaper() {
@@ -271,7 +359,9 @@ config_wallpaper() {
   LOG "config wallpaper success"
   notify "config wallpaper success"
 }
-
+###############################
+#   显卡驱动
+###############################
 install_video_driver() {
   LOG "install video driver"
   pkg_cmd=$(get_pack_cmd)
@@ -294,6 +384,54 @@ install_video_driver() {
   fi
   LOG "No NVIDIA GPU detected, skipping driver installation."
 }
+
+function download_nvidia_driver() {
+    loginfo "Start to download_nvidia_driver"
+    prompt "ready to download nvidia driver" || return 1
+    command -v jq >/dev/null || sudo $pac_cmd_ins jq
+    ! command -v jq >/dev/null && logerr "please install jq command first!" && return 1
+
+    tmp_json=/tmp/tmp.nvidia.menu.json
+    # 下载链接(以 NVIDIA GeForce GTX 1660 SUPER 显卡为例,驱动兼容大部分 GeForce系列)
+    dn_url='https://gfwsl.geforce.cn/services_toolkit/services/com/nvidia/services/AjaxDriverService.php?func=DriverManualLookup&psid=112&pfid=910&osID=12&languageCode=2052&beta=null&isWHQL=0&dltype=-1&dch=0&upCRD=null&qnf=0&sort1=0&numberOfResults=10'
+    
+    # 检查文件最后修改时间是否为 15天内 , 是就不重复下载，否则就下载新的json文件
+    old_json_file=`find $tmp_json  -type f -mtime -15 2>/dev/null`
+    if [ "$old_json_file" = "" ] ; then
+        ${CURL} -o $tmp_json $dn_url \
+            -H 'authority: gfwsl.geforce.cn' \
+            -H 'accept: */*' \
+            -H 'accept-language: zh-CN,zh;q=0.9,en;q=0.8,zh-TW;q=0.7' \
+            -H 'cache-control: no-cache' \
+            -H 'dnt: 1' \
+            -H 'origin: https://www.nvidia.cn' \
+            -H 'pragma: no-cache' \
+            -H 'referer: https://www.nvidia.cn/' \
+            -H 'sec-ch-ua: "Google Chrome";v="111", "Not(A:Brand";v="8", "Chromium";v="111"' \
+            -H 'sec-ch-ua-mobile: ?0' \
+            -H 'sec-ch-ua-platform: "Linux"' \
+            -H 'sec-fetch-dest: empty' \
+            -H 'sec-fetch-mode: cors' \
+            -H 'sec-fetch-site: cross-site' \
+            -H 'user-agent: Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/111.0.0.0 Safari/537.36' \
+            --compressed
+        [[ "$?" != "0" ]] && logerr "failed to get nvidia driver package list!" && return 1
+    fi
+    file_url=`cat $tmp_json |jq |awk '/DownloadURL/{ print $2 }' | sed -n 's/[",]//g; 1p'`
+    file_size=`cat $tmp_json |jq |awk '/DownloadURL/{ print $2 }' | sed -n 's/[",]//g; 2p'`
+    loginfo "download url: $file_url , file size: $file_size MB"
+    tmp_file="/tmp/`basename $file_url`"
+
+    if [ -f "$tmp_file" ] ; then
+        echo -e "${RED}Tips: ${tmp_file} is already downloaded !${NC}"
+    fi
+    prompt "Download nvidia driver package(file size: $file_size )" && ! ${CURL} -o $tmp_file -SL $file_url && logerr "Download nvidia driver failed!" && return 2
+
+    loginfo "nvidia driver: $tmp_file ."
+    sh ${tmp_file}
+    loginfo "finish download_nvidia_driver."
+}
+
 
 install_paru() {
   LOG "install paru"
@@ -377,47 +515,49 @@ enable_dm() {
   LOG "Enable sddm success"
   notify "Enable sddm success"
 }
-# 主菜单
-main_menu() {
-  echo "0. install hyprland and config"
-  echo "-------------------------"
-  echo "1. install hyprland"
-  echo "2. config hyprland"
-  echo "-------------------------"
-  echo "a. install aur"
-  echo "d. install video driver"
-  echo "f. install fonts"
-  echo "s. enable sddm"
-  echo "t. theme config"
-  echo "w. config wallpaper"
-  echo "-------------------------"
-  echo "q. quit"
-}
 
-show_main_menu() {
-  main_menu | ${MENU_CMD} | awk -F'.' '{printf $1}'
+show_menu_main() {
+  menu_head "Main menu"
+  menu_item 0 quick install hyprland
+  menu_item 1 install hyprland
+  menu_item 2 config hyprland
+  menu_item a install aur
+  menu_item d install video driver
+  menu_item f install fonts
+  menu_item s enable sddm
+  menu_item t theme config
+  menu_item w config wallpaper
+  menu_tail
+  menu_iteml q Quit
+  menu_tail
 }
 
 do_main_menu() {
   local choice
-  choice=$(show_main_menu)
-  case "${choice}" in
-    1) install_hyprland ;;
-    2) config_hyprland ;;
-    3) config_sddm ;;
-    4) config_grub ;;
-    0) auto_install ;;
-    d) install_video_driver ;;
-    f) install_fonts ;;
-    s) enable_dm ;;
-    t) theme_config ;;
-    q | "") return 0 ;;
-    w) config_wallpaper ;;
-    a) install_aur ;;
-    *) echo "Invalid choice. Please try again." ;;
-  esac
+  while true ; do
+    show_menu_main
+    read -r -n 1 -e  -p "`echo_greenr choice:`${PMT} " choice
+    case "${choice}" in
+      1) install_hyprland ;;
+      2) config_hyprland ;;
+      3) config_sddm ;;
+      4) config_grub ;;
+      0) auto_install ;;
+      a) install_aur ;;
+      d) download_nvidia_driver ;;
+      f) install_fonts ;;
+      q | "") return 0 ;;
+      s) enable_dm ;;
+      t) theme_config ;;
+      w) config_wallpaper ;;
+      *) echo "Invalid choice. Please try again." ;;
+    esac
+  done
 }
 
-check_depends || exit 1
+#####################################################
+#  MAIN:PROCESS
+
+check_basic || exit 1
 pkg_cmd=$(get_pack_cmd)
 do_main_menu
