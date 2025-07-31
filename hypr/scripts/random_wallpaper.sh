@@ -92,6 +92,7 @@ prepare_command() {
             pkill -9 mpvpaper
             ;;
         "mpvpaper")
+            pkill -9 mpvpaper
             pkill -9 swww-daemon
             pkill -9 hyprpaper
             pkill -9 swaybg
@@ -104,7 +105,9 @@ set_mpvpaper() {
     if command -v mpvpaper > /dev/null 2>&1; then
         # 获取当前壁纸mp4/mkv/mov 等视频文件，找到了就使用 mpvpaper ，没有则向下继续执行
         current_wallpaper=$(find "$WALLPAPER_DIR" \( -iname "*.mp4" -o -iname "*.mkv" -o -iname "*.mov" -o -iname "*.avi" \) | shuf -n 1)
-        mpvpaper -fvs -o "no-audio loop" "*" "$current_wallpaper"
+        notify-send "Wallpaper changed to $current_wallpaper"
+        # mpvpaper -fvs -o "no-audio loop --no-ipc --script-opts=mpvpaper:mpv_dbus=no" "*" "$current_wallpaper"
+        mpvpaper --fork -o "no-audio loop panscan=1.0 --mute=yes --background-color='#ffffff'" "*" "$current_wallpaper"
     fi
 }
 

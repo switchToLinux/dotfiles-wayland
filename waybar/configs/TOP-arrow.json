@@ -5,6 +5,7 @@
         "$HOME/.config/waybar/modules/modules-group.json",
         "$HOME/.config/waybar/modules/modules-autogen.json"
     ],
+    "margin": "4",
     "layer": "top",
     "position": "top",
     "modules-left": [
