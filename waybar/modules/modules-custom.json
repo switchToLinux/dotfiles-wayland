@@ -44,6 +44,8 @@
             "on-scroll-up": "prev",
             "on-scroll-down": "next"
         },
+        "tooltip": true,
+        "tooltip-format": "cffi manager\n左键:暂停/播放\n右键: 循环播放\n中键: 随机播放\n下滚: 下一首\n上滚: 上一首",
         "dest": "mpris"
     },
     "custom/wifi": {
